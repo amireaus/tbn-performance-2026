@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amire — TBN Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg:        #111214;
+  --sidebar:   #161719;
+  --surface:   #1c1e21;
+  --surface2:  #242628;
+  --border:    #2a2d31;
+  --border2:   #333740;
+  --text:      #e4e6eb;
+  --muted:     #6b7280;
+  --muted2:    #9ca3af;
+  --db:        #e05c5c;
+  --inika:     #4ade80;
+  --raww:      #f59e0b;
+  --accent:    #5b8af5;
+  --green:     #4ade80;
+  --red:       #f87171;
+  --yellow:    #fbbf24;
+  --font:      'Inter', system-ui, sans-serif;
+  --sidebar-w: 220px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── LOGIN ── */
+#loginScreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 44px 40px 36px;
+  width: 340px;
+}
+
+.login-agency {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.login-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 28px;
+}
+
+.login-card input[type=password] {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  padding: 11px 14px;
+  outline: none;
+  margin-bottom: 10px;
+  transition: border-color 0.15s;
+}
+
+.login-card input[type=password]:focus { border-color: var(--accent); }
+
+.login-btn {
+  width: 100%;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 11px;
+  transition: opacity 0.15s;
+}
+.login-btn:hover { opacity: 0.85; }
+.login-error { color: var(--red); font-size: 12px; margin-top: 8px; min-height: 16px; }
+
+/* ── APP SHELL ── */
+#app { display: none; height: 100vh; display: none; flex-direction: row; }
+
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+}
+
+.sidebar-header {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-agency {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.sidebar-client {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.sidebar-nav { padding: 16px 0; flex: 1; }
+
+.nav-group { margin-bottom: 20px; }
+
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 18px;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 18px;
+  cursor: pointer;
+  color: var(--muted2);
+  font-size: 13px;
+  font-weight: 500;
+  border-left: 2px solid transparent;
+  transition: all 0.12s;
+  user-select: none;
+}
+
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav-item.active { color: var(--text); border-left-color: currentColor; background: rgba(255,255,255,0.04); }
+.nav-item.active .nav-dot { opacity: 1; }
+
+.nav-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.nav-sub {
+  padding: 5px 18px 5px 33px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+  border-left: 2px solid transparent;
+  transition: all 0.12s;
+  user-select: none;
+}
+
+.nav-sub:hover { color: var(--muted2); }
+.nav-sub.active { color: var(--text); border-left-color: var(--border2); }
+
+.sidebar-footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-updated { font-size: 11px; color: var(--muted); }
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-family: var(--font);
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: color 0.12s;
+}
+.logout-btn:hover { color: var(--red); }
+
+/* ── MAIN CONTENT ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: var(--sidebar);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+
+.range-tabs { display: flex; gap: 4px; }
+
+.range-tab {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted2);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  transition: all 0.12s;
+}
+.range-tab:hover { color: var(--text); }
+.range-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.refresh-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted2);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 4px 10px;
+  transition: all 0.12s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.refresh-btn:hover { color: var(--text); border-color: var(--border2); }
+
+.spinner {
+  display: inline-block;
+  width: 11px; height: 11px;
+  border: 1.5px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── PAGE CONTENT ── */
+.page { display: none; padding: 28px; }
+.page.active { display: block; }
+
+.page-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-title-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── KPI STRIP ── */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.kpi-val {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.kpi-delta {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.kpi-delta.up   { color: var(--green); }
+.kpi-delta.down { color: var(--red); }
+
+/* ── SECTION BLOCKS ── */
+.section-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.section-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-block-title {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.platform-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.badge-google { background: rgba(66,133,244,0.15); color: #7aabff; }
+.badge-meta   { background: rgba(24,119,242,0.12); color: #6ea3f5; }
+.badge-shopify{ background: rgba(150,191,84,0.15); color: #96bf54; }
+.badge-summary{ background: rgba(91,138,245,0.15); color: #8fb3ff; }
+
+/* ── DATA TABLE ── */
+.data-table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 9px 16px;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+tbody td { padding: 11px 16px; font-size: 12px; white-space: nowrap; }
+
+.market-tag {
+  background: var(--surface2);
+  border-radius: 4px;
+  color: var(--muted2);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+}
+
+.roas-hi  { color: var(--green);  font-weight: 700; }
+.roas-mid { color: var(--yellow); font-weight: 700; }
+.roas-lo  { color: var(--red);    font-weight: 700; }
+.not-conn { color: var(--muted); font-style: italic; font-size: 11px; }
+
+.pacing-hi  { color: var(--green); }
+.pacing-mid { color: var(--yellow); }
+.pacing-lo  { color: var(--red); }
+
+/* ── CHARTS ── */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
+
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.chart-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted2);
+  margin-bottom: 14px;
+}
+
+.chart-wrap { position: relative; height: 200px; }
+
+/* ── ROAS COMPARISON TABLE ── */
+.roas-compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.roas-compare-grid .roas-col {
+  padding: 16px 20px;
+}
+
+.roas-compare-grid .roas-col:first-child {
+  border-right: 1px solid var(--border);
+}
+
+.roas-col-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.roas-compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.roas-compare-row:last-child { border-bottom: none; }
+
+.roas-platform-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.roas-val-block { text-align: right; }
+
+.roas-big {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.roas-sub {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.roas-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 20px;
+}
+
+/* ── EMPTY / LOADING ── */
+.state-msg {
+  padding: 36px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-agency">Amire</div>
+    <div class="login-title">TBN Dashboard</div>
+    <input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Sign in</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ══ APP ═════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-agency">Amire</div>
+      <div class="sidebar-client">TBN Dashboard</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Portfolio -->
+      <div class="nav-group">
+        <div class="nav-group-label">Portfolio</div>
+        <div class="nav-item active" onclick="navigate('all')" id="nav-all">
+          <span class="nav-dot" style="background:var(--muted2)"></span>
+          All Brands
+        </div>
+      </div>
+
+      <!-- DB -->
+      <div class="nav-group">
+        <div class="nav-group-label">DB Designer Brands</div>
+        <div class="nav-item" onclick="navigate('db')" id="nav-db">
+          <span class="nav-dot" style="background:var(--db)"></span>
+          DB Summary
+        </div>
+        <div class="nav-sub" onclick="navigate('db-au')" id="nav-db-au">Australia</div>
+        <div class="nav-sub" onclick="navigate('db-nz')" id="nav-db-nz">New Zealand</div>
+      </div>
+
+      <!-- INIKA -->
+      <div class="nav-group">
+        <div class="nav-group-label">Inika Organic</div>
+        <div class="nav-item" onclick="navigate('inika')" id="nav-inika">
+          <span class="nav-dot" style="background:var(--inika)"></span>
+          INIKA Summary
+        </div>
+        <div class="nav-sub" onclick="navigate('inika-au')" id="nav-inika-au">Australia</div>
+        <div class="nav-sub" onclick="navigate('inika-nz')" id="nav-inika-nz">New Zealand</div>
+        <div class="nav-sub" onclick="navigate('inika-us')" id="nav-inika-us">United States</div>
+        <div class="nav-sub" onclick="navigate('inika-uk')" id="nav-inika-uk">United Kingdom</div>
+      </div>
+
+      <!-- RAWW -->
+      <div class="nav-group">
+        <div class="nav-group-label">Raww Cosmetics</div>
+        <div class="nav-item" onclick="navigate('raww')" id="nav-raww">
+          <span class="nav-dot" style="background:var(--raww)"></span>
+          RAWW Australia
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="sidebar-updated" id="sidebarUpdated">—</span>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">All Brands</div>
+      <div class="topbar-right">
+        <div class="range-tabs">
+          <button class="range-tab active" onclick="setRange('7d',this)">7D</button>
+          <button class="range-tab" onclick="setRange('mtd',this)">MTD</button>
+          <button class="range-tab" onclick="setRange('mom',this)">MoM</button>
+          <button class="range-tab" onclick="setRange('yoy',this)">YoY</button>
+        </div>
+        <button class="refresh-btn" onclick="loadData()">
+          <span class="spinner" id="spinner" style="display:none"></span>
+          ↻ Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- ── ALL BRANDS PAGE ── -->
+    <div class="page active" id="page-all">
+      <div class="page-eyebrow">Portfolio Overview</div>
+      <div class="page-title">All Brands</div>
+      <div class="kpi-strip" id="kpi-all"></div>
+      <div class="section-block">
+        <div class="section-block-header">
+          <span class="section-block-title"><span class="platform-badge badge-summary">Summary</span> Combined ROAS by Brand & Market</span>
+        </div>
+        <div class="data-table-wrap" id="tbl-all-roas"><div class="state-msg"><span class="spinner"></span></div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-card-title">Day-by-Day — Total Ad Spend</div>
+          <div class="chart-wrap"><canvas id="chart-all-daily"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">Month on Month — Last 13 Months</div>
+          <div class="chart-wrap"><canvas id="chart-all-mom"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BRAND / MARKET PAGES (generated) ── -->
+    <div id="dynamicPages"></div>
+
+  </main>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════
+const PASSWORD = 'dashboard2025';
+const SHEET_ID = '1DAScvOQ7a4qzy2VtvmBY9AHUEjRnaAuJAQOhui3zH9U';
+const TABS = {
+  platform: 'Platform Summary',
+  shopify:  'Shopify Data',
+  meta:     'Meta Data',
+  google:   'Google Ads Data'
+};
+
+// Page definitions
+const PAGES = {
+  'all':      { label: 'All Brands',        brand: null,    market: null,   color: '#9ca3af' },
+  'db':       { label: 'DB Summary',         brand: 'DB',    market: null,   color: '#e05c5c' },
+  'db-au':    { label: 'DB — Australia',     brand: 'DB',    market: 'AU',   color: '#e05c5c' },
+  'db-nz':    { label: 'DB — New Zealand',   brand: 'DB',    market: 'NZ',   color: '#e05c5c' },
+  'inika':    { label: 'INIKA Summary',      brand: 'INIKA', market: null,   color: '#4ade80' },
+  'inika-au': { label: 'INIKA — Australia',  brand: 'INIKA', market: 'AU',   color: '#4ade80' },
+  'inika-nz': { label: 'INIKA — New Zealand',brand: 'INIKA', market: 'NZ',   color: '#4ade80' },
+  'inika-us': { label: 'INIKA — United States',brand:'INIKA',market: 'US',   color: '#4ade80' },
+  'inika-uk': { label: 'INIKA — United Kingdom',brand:'INIKA',market:'UK',   color: '#4ade80' },
+  'raww':     { label: 'RAWW Australia',     brand: 'RAWW',  market: 'AU',   color: '#f59e0b' }
+};
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let currentPage  = 'all';
+let currentRange = '7d';
+let sheetData    = {};
+let chartInstances = {};
+
+// ════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════
+function doLogin() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw !== PASSWORD) {
+    document.getElementById('loginError').textContent = 'Incorrect password.';
+    return;
+  }
+  document.getElementById('loginScreen').style.display = 'none';
+  const app = document.getElementById('app');
+  app.style.display = 'flex';
+  buildDynamicPages();
+  loadData();
+}
+
+function logout() {
+  document.getElementById('pwInput').value = '';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ════════════════════════════════════════════════════
+// BUILD DYNAMIC PAGES
+// ════════════════════════════════════════════════════
+function buildDynamicPages() {
+  const container = document.getElementById('dynamicPages');
+  const keys = Object.keys(PAGES).filter(k => k !== 'all');
+  let html = '';
+  keys.forEach(key => {
+    const p = PAGES[key];
+    html += `
+    <div class="page" id="page-${key}">
+      <div class="page-eyebrow">${getBreadcrumb(key)}</div>
+      <div class="page-title">
+        <span class="page-title-dot" style="background:${p.color}"></span>
+        ${p.label}
+      </div>
+      <div class="kpi-strip" id="kpi-${key}"></div>
+
+      <!-- ROAS Comparison -->
+      <div class="section-block">
+        <div class="section-block-header">
+          <span class="section-block-title"><span class="platform-badge badge-summary">ROAS</span> Google Ads vs Meta — MTD &amp; Last 7 Days</span>
+        </div>
+        <div id="tbl-${key}-roas-compare"><div class="state-msg"><span class="spinner"></span></div></div>
+      </div>
+
+      <!-- Google Ads -->
+      <div class="section-block">
+        <div class="section-block-header">
+          <span class="section-block-title"><span class="platform-badge badge-google">Google Ads</span> Performance</span>
+        </div>
+        <div class="data-table-wrap" id="tbl-${key}-google"><div class="state-msg"><span class="spinner"></span></div></div>
+      </div>
+
+      <!-- Meta -->
+      <div class="section-block">
+        <div class="section-block-header">
+          <span class="section-block-title"><span class="platform-badge badge-meta">Meta</span> Performance</span>
+        </div>
+        <div class="data-table-wrap" id="tbl-${key}-meta"><div class="state-msg"><span class="spinner"></span></div></div>
+      </div>
+
+      <!-- Shopify -->
+      <div class="section-block">
+        <div class="section-block-header">
+          <span class="section-block-title"><span class="platform-badge badge-shopify">Shopify</span> Sales</span>
+        </div>
+        <div class="data-table-wrap" id="tbl-${key}-shopify"><div class="state-msg"><span class="spinner"></span></div></div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-card-title">Day-by-Day — Total Ad Spend</div>
+          <div class="chart-wrap"><canvas id="chart-${key}-daily"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">Month on Month — Last 13 Months</div>
+          <div class="chart-wrap"><canvas id="chart-${key}-mom"></canvas></div>
+        </div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function getBreadcrumb(key) {
+  const p = PAGES[key];
+  if (!p.market) return p.brand + ' · Summary';
+  return p.brand + ' · ' + p.market;
+}
+
+// ════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════
+function navigate(key) {
+  currentPage = key;
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + key).classList.add('active');
+  // Update nav highlights
+  document.querySelectorAll('.nav-item, .nav-sub').forEach(el => el.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + key);
+  if (navEl) navEl.classList.add('active');
+  // Topbar title
+  document.getElementById('topbarTitle').textContent = PAGES[key]?.label || key;
+  renderPage(key);
+}
+
+// ════════════════════════════════════════════════════
+// DATA FETCH
+// ════════════════════════════════════════════════════
+async function fetchSheet(tabName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
+  const res  = await fetch(url);
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+function parseCSV(text) {
+  return text.trim().split('\n').map(line => {
+    const cols = []; let cur = '', inQ = false;
+    for (const ch of line) {
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+async function loadData() {
+  const sp = document.getElementById('spinner');
+  sp.style.display = 'inline-block';
+  try {
+    const [platform, shopify, meta, google] = await Promise.all([
+      fetchSheet(TABS.platform),
+      fetchSheet(TABS.shopify),
+      fetchSheet(TABS.meta),
+      fetchSheet(TABS.google)
+    ]);
+    sheetData = { platform, shopify, meta, google };
+    const now = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('sidebarUpdated').textContent = now;
+    renderAll();
+  } catch(e) {
+    console.error('Sheet load error:', e);
+    document.getElementById('sidebarUpdated').textContent = 'Error';
+  }
+  sp.style.display = 'none';
+}
+
+// ════════════════════════════════════════════════════
+// RANGE
+// ════════════════════════════════════════════════════
+function setRange(r, el) {
+  currentRange = r;
+  document.querySelectorAll('.range-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderAll();
+}
+
+// ════════════════════════════════════════════════════
+// RENDER ALL
+// ════════════════════════════════════════════════════
+function renderAll() {
+  Object.keys(PAGES).forEach(key => renderPage(key));
+}
+
+function renderPage(key) {
+  const p = PAGES[key];
+  if (key === 'all') {
+    renderAllBrandsPage();
+  } else {
+    renderBrandPage(key, p.brand, p.market, p.color);
+  }
+}
+
+// ════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════
+function colIdx(headers, ...names) {
+  for (const n of names) {
+    const i = headers.findIndex(h => h && h.toLowerCase().includes(n.toLowerCase()));
+    if (i !== -1) return i;
+  }
+  return -1;
+}
+
+function filterRows(rows, brandCol, marketCol, brand, market) {
+  if (!rows || rows.length < 2) return [];
+  return rows.slice(1).filter(row => {
+    const b = (row[brandCol] || '').toUpperCase().trim();
+    const m = (row[marketCol]|| '').toUpperCase().trim();
+    const brandOk  = !brand  || b.includes(brand.toUpperCase());
+    const marketOk = !market || m === market.toUpperCase();
+    return brandOk && marketOk;
+  });
+}
+
+const fmtMoney = v => {
+  const n = parseFloat(String(v||'').replace(/[$,]/g,''));
+  if (isNaN(n) || n === 0) return '—';
+  if (Math.abs(n) >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+  if (Math.abs(n) >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+  return '$' + n.toFixed(2);
+};
+
+const fmtN = v => {
+  const n = parseFloat(String(v||'').replace(/[,$%]/g,''));
+  return isNaN(n) ? '—' : n.toLocaleString('en-AU');
+};
+
+const fmtPct = v => {
+  const n = parseFloat(String(v||'').replace(/[%,]/g,''));
+  return isNaN(n) ? '—' : n.toFixed(1) + '%';
+};
+
+const fmtRoas = v => {
+  const n = parseFloat(String(v||'').replace(/[$,x]/g,''));
+  return isNaN(n) || n === 0 ? '—' : n.toFixed(2) + 'x';
+};
+
+function roasCls(v) {
+  const n = parseFloat(String(v||'').replace(/[$,x]/g,''));
+  if (isNaN(n)) return '';
+  return n >= 4 ? 'roas-hi' : n >= 2 ? 'roas-mid' : 'roas-lo';
+}
+
+function pacingCls(v) {
+  const n = parseFloat(String(v||'').replace(/[%,]/g,''));
+  if (isNaN(n)) return '';
+  return n >= 40 ? 'pacing-hi' : n >= 20 ? 'pacing-mid' : 'pacing-lo';
+}
+
+function sumCol(rows, col) {
+  return rows.reduce((acc, r) => acc + (parseFloat(String(r[col]||'').replace(/[$,]/g,''))||0), 0);
+}
+
+function isNotConnected(val) {
+  if (!val || val === '' || val === '0') return true;
+  if (String(val).toLowerCase().includes('not')) return true;
+  const n = parseFloat(String(val).replace(/[$,]/g,''));
+  return isNaN(n) || n === 0;
+}
+
+// ════════════════════════════════════════════════════
+// ALL BRANDS PAGE
+// ════════════════════════════════════════════════════
+function renderAllBrandsPage() {
+  const { platform, google, meta, shopify } = sheetData;
+  if (!platform) return;
+
+  const h = platform[0];
+  const bC = colIdx(h,'brand'); const mC = colIdx(h,'market');
+  const gC = colIdx(h,'google spend','google'); const metC = colIdx(h,'meta spend','meta');
+  const totC = colIdx(h,'total'); const nsC = colIdx(h,'shopify net','net sales');
+  const rC = colIdx(h,'roas');
+
+  const rows = platform.slice(1).filter(r => r[bC]);
+
+  // KPIs
+  let spend = 0, rev = 0, gSpend = 0, mSpend = 0;
+  rows.forEach(r => {
+    spend  += parseFloat(String(r[totC]||'').replace(/[$,]/g,''))||0;
+    rev    += parseFloat(String(r[nsC] ||'').replace(/[$,]/g,''))||0;
+    gSpend += parseFloat(String(r[gC]  ||'').replace(/[$,]/g,''))||0;
+    mSpend += parseFloat(String(r[metC]||'').replace(/[$,]/g,''))||0;
+  });
+  const roas = spend > 0 ? (rev/spend).toFixed(2) : '0.00';
+
+  document.getElementById('kpi-all').innerHTML = kpiStrip([
+    { label:'Total Ad Spend',     val: fmtMoney(spend) },
+    { label:'Total Revenue',      val: fmtMoney(rev) },
+    { label:'Combined ROAS',      val: roas + 'x' },
+    { label:'Google Spend',       val: fmtMoney(gSpend) },
+    { label:'Meta Spend',         val: fmtMoney(mSpend) },
+  ]);
+
+  // ROAS table
+  let html = `<table><thead><tr>
+    <th>Brand</th><th>Market</th><th>Google Spend</th><th>Meta Spend</th>
+    <th>Total Spend</th><th>Net Sales</th><th>ROAS</th>
+  </tr></thead><tbody>`;
+  rows.forEach(r => {
+    const ns = r[nsC]||'';
+    html += `<tr>
+      <td style="font-weight:600">${r[bC]||''}</td>
+      <td><span class="market-tag">${r[mC]||''}</span></td>
+      <td>${fmtMoney(r[gC])}</td><td>${fmtMoney(r[metC])}</td>
+      <td>${fmtMoney(r[totC])}</td>
+      <td>${isNotConnected(ns)?'<span class="not-conn">Not connected</span>':fmtMoney(ns)}</td>
+      <td><span class="${roasCls(r[rC])}">${fmtRoas(r[rC])}</span></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('tbl-all-roas').innerHTML = html;
+
+  // Charts — mock daily + mom from available data
+  renderDailyChart('chart-all-daily', rows, totC, '#5b8af5');
+  renderMomChart('chart-all-mom', rows, totC, '#5b8af5');
+}
+
+// ════════════════════════════════════════════════════
+// BRAND / MARKET PAGE
+// ════════════════════════════════════════════════════
+function renderBrandPage(key, brand, market, color) {
+  const el = document.getElementById('page-' + key);
+  if (!el || !sheetData.google) return;
+
+  // ── Google Ads
+  const gh = sheetData.google[0];
+  const gbC = colIdx(gh,'brand'); const gmC = colIdx(gh,'market');
+  const gSpC= colIdx(gh,'media spend','spend'); const gBudC= colIdx(gh,'budget');
+  const gPacC=colIdx(gh,'pacing'); const gRevC=colIdx(gh,'revenue');
+  const gRC = colIdx(gh,'roas'); const gConC=colIdx(gh,'conversion');
+  const gClC= colIdx(gh,'click'); const gCRC= colIdx(gh,'conv. rate','rate');
+
+  const gRows = filterRows(sheetData.google, gbC, gmC, brand, market);
+
+  let html = `<table><thead><tr>
+    <th>Brand</th><th>Market</th><th>Spend</th><th>Budget</th>
+    <th>Pacing</th><th>Revenue</th><th>ROAS</th><th>Conversions</th><th>Clicks</th><th>Conv. Rate</th>
+  </tr></thead><tbody>`;
+  if (gRows.length === 0) { html += `<tr><td colspan="10" class="state-msg">No data</td></tr>`; }
+  gRows.forEach(r => {
+    html += `<tr>
+      <td style="font-weight:600">${r[gbC]||''}</td>
+      <td><span class="market-tag">${r[gmC]||''}</span></td>
+      <td>${fmtMoney(r[gSpC])}</td><td>${fmtMoney(r[gBudC])}</td>
+      <td><span class="${pacingCls(r[gPacC])}">${fmtPct(r[gPacC])}</span></td>
+      <td>${fmtMoney(r[gRevC])}</td>
+      <td><span class="${roasCls(r[gRC])}">${fmtRoas(r[gRC])}</span></td>
+      <td>${fmtN(r[gConC])}</td><td>${fmtN(r[gClC])}</td><td>${fmtPct(r[gCRC])}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById(`tbl-${key}-google`).innerHTML = html;
+
+  // ── Meta
+  const mh = sheetData.meta[0];
+  const mbC = colIdx(mh,'brand'); const mmC = colIdx(mh,'market');
+  const mSpC= colIdx(mh,'media spend','spend'); const mBudC=colIdx(mh,'budget');
+  const mPacC=colIdx(mh,'pacing'); const mRevC=colIdx(mh,'purchase revenue','revenue');
+  const mRC = colIdx(mh,'roas'); const mPurC=colIdx(mh,'purchase');
+  const mClC= colIdx(mh,'click'); const mCRC= colIdx(mh,'conv. rate','rate');
+
+  const metaRows = filterRows(sheetData.meta, mbC, mmC, brand, market);
+
+  html = `<table><thead><tr>
+    <th>Brand</th><th>Market</th><th>Spend</th><th>Budget</th>
+    <th>Pacing</th><th>Revenue</th><th>ROAS</th><th>Purchases</th><th>Clicks</th><th>Conv. Rate</th>
+  </tr></thead><tbody>`;
+  if (metaRows.length === 0) { html += `<tr><td colspan="10" class="state-msg">No data</td></tr>`; }
+  metaRows.forEach(r => {
+    html += `<tr>
+      <td style="font-weight:600">${r[mbC]||''}</td>
+      <td><span class="market-tag">${r[mmC]||''}</span></td>
+      <td>${fmtMoney(r[mSpC])}</td><td>${fmtMoney(r[mBudC])}</td>
+      <td><span class="${pacingCls(r[mPacC])}">${fmtPct(r[mPacC])}</span></td>
+      <td>${fmtMoney(r[mRevC])}</td>
+      <td><span class="${roasCls(r[mRC])}">${fmtRoas(r[mRC])}</span></td>
+      <td>${fmtN(r[mPurC])}</td><td>${fmtN(r[mClC])}</td><td>${fmtPct(r[mCRC])}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById(`tbl-${key}-meta`).innerHTML = html;
+
+  // ── Shopify
+  const sh = sheetData.shopify[0];
+  const sbC = colIdx(sh,'brand'); const smC = colIdx(sh,'market');
+  const sOrdC=colIdx(sh,'order'); const sGrC=colIdx(sh,'gross');
+  const sDisC=colIdx(sh,'discount'); const sRetC=colIdx(sh,'return');
+  const sShpC=colIdx(sh,'shipping'); const sTaxC=colIdx(sh,'tax');
+  const sNetC=colIdx(sh,'net sales','net'); const sTotC=colIdx(sh,'total sales');
+  const sAovC=colIdx(sh,'avg','purchase value');
+
+  const shopRows = filterRows(sheetData.shopify, sbC, smC, brand, market);
+
+  html = `<table><thead><tr>
+    <th>Brand</th><th>Market</th><th>Orders</th><th>Gross Sales</th>
+    <th>Discounts</th><th>Returns</th><th>Shipping</th><th>Taxes</th>
+    <th>Net Sales</th><th>Total Sales</th><th>Avg. Order</th>
+  </tr></thead><tbody>`;
+  if (shopRows.length === 0) { html += `<tr><td colspan="11" class="state-msg">No data</td></tr>`; }
+  shopRows.forEach(r => {
+    const ns = r[sNetC]||'';
+    html += `<tr>
+      <td style="font-weight:600">${r[sbC]||''}</td>
+      <td><span class="market-tag">${r[smC]||''}</span></td>
+      <td>${fmtN(r[sOrdC])}</td><td>${fmtMoney(r[sGrC])}</td>
+      <td>${fmtMoney(r[sDisC])}</td><td>${fmtMoney(r[sRetC])}</td>
+      <td>${fmtMoney(r[sShpC])}</td><td>${fmtMoney(r[sTaxC])}</td>
+      <td>${isNotConnected(ns)?'<span class="not-conn">Not connected</span>':fmtMoney(ns)}</td>
+      <td>${fmtMoney(r[sTotC])}</td><td>${fmtMoney(r[sAovC])}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById(`tbl-${key}-shopify`).innerHTML = html;
+
+  // ── KPIs from google+meta combined
+  let totSpend=0, totRev=0, totConv=0, totClicks=0;
+  gRows.forEach(r => {
+    totSpend += parseFloat(String(r[gSpC]||'').replace(/[$,]/g,''))||0;
+    totRev   += parseFloat(String(r[gRevC]||'').replace(/[$,]/g,''))||0;
+    totConv  += parseFloat(String(r[gConC]||'').replace(/[$,]/g,''))||0;
+    totClicks+= parseFloat(String(r[gClC]||'').replace(/[$,]/g,''))||0;
+  });
+  metaRows.forEach(r => {
+    totSpend += parseFloat(String(r[mSpC]||'').replace(/[$,]/g,''))||0;
+    totRev   += parseFloat(String(r[mRevC]||'').replace(/[$,]/g,''))||0;
+    totClicks+= parseFloat(String(r[mClC]||'').replace(/[$,]/g,''))||0;
+  });
+  const combRoas = totSpend > 0 ? (totRev/totSpend).toFixed(2) : '0.00';
+
+  document.getElementById(`kpi-${key}`).innerHTML = kpiStrip([
+    { label:'Total Ad Spend', val: fmtMoney(totSpend) },
+    { label:'Total Revenue',  val: fmtMoney(totRev) },
+    { label:'Combined ROAS',  val: combRoas + 'x' },
+    { label:'Conversions',    val: fmtN(totConv) },
+    { label:'Total Clicks',   val: fmtN(totClicks) },
+  ]);
+
+  // ── ROAS Compare
+  renderRoasCompare(key, gRows, metaRows, gRC, gRevC, gSpC, mRC, mRevC, mSpC);
+
+  // Charts
+  renderDailyChart(`chart-${key}-daily`, [...gRows, ...metaRows], gSpC, color);
+  renderMomChart(`chart-${key}-mom`, [...gRows, ...metaRows], gSpC, color);
+}
+
+// ════════════════════════════════════════════════════
+// ROAS COMPARISON TABLE — Google vs Meta, MTD vs 7D
+// Note: MTD and 7D values come from the same sheet
+// tabs filtered by the current range selection.
+// When your sheet has separate MTD/7D columns, update
+// the column lookups below to match those header names.
+// ════════════════════════════════════════════════════
+function renderRoasCompare(key, gRows, metaRows, gRC, gRevC, gSpC, mRC, mRevC, mSpC) {
+  const el = document.getElementById(`tbl-${key}-roas-compare`);
+  if (!el) return;
+
+  // Pull ROAS values — from current tab data
+  // If your sheet has explicit MTD/7D ROAS columns, map them here instead
+  const gRoas7d  = extractRoas(gRows,  gRC,  gRevC, gSpC);
+  const mRoas7d  = extractRoas(metaRows, mRC, mRevC, mSpC);
+
+  // MTD: we look for a column containing "mtd" in the header,
+  // falling back to the same value with a visual note if not found
+  const gRoasMtd = extractRoasByHeader(sheetData.google,  gRows, 'mtd roas', 'roas mtd') || gRoas7d;
+  const mRoasMtd = extractRoasByHeader(sheetData.meta,   metaRows, 'mtd roas', 'roas mtd') || mRoas7d;
+
+  const mtdNote  = (gRoasMtd === gRoas7d && mRoasMtd === mRoas7d)
+    ? '<div style="font-size:10px;color:var(--muted);padding:10px 20px 14px;border-top:1px solid var(--border)">MTD column not found in sheet — showing current period values. Add a <strong>MTD ROAS</strong> column to your sheet tabs to populate MTD separately.</div>'
+    : '';
+
+  el.innerHTML = `
+    <div class="roas-compare-grid">
+      <div class="roas-col">
+        <div class="roas-col-label">Last 7 Days</div>
+        <div class="roas-compare-row">
+          <span class="roas-platform-name">
+            <span class="platform-badge badge-google" style="margin:0">Google Ads</span>
+          </span>
+          <div class="roas-val-block">
+            <div class="roas-big ${roasCls(gRoas7d)}">${fmtRoas(gRoas7d)}</div>
+            <div class="roas-sub">ROAS</div>
+          </div>
+        </div>
+        <div class="roas-compare-row">
+          <span class="roas-platform-name">
+            <span class="platform-badge badge-meta" style="margin:0">Meta</span>
+          </span>
+          <div class="roas-val-block">
+            <div class="roas-big ${roasCls(mRoas7d)}">${fmtRoas(mRoas7d)}</div>
+            <div class="roas-sub">ROAS</div>
+          </div>
+        </div>
+      </div>
+      <div class="roas-col">
+        <div class="roas-col-label">Month to Date</div>
+        <div class="roas-compare-row">
+          <span class="roas-platform-name">
+            <span class="platform-badge badge-google" style="margin:0">Google Ads</span>
+          </span>
+          <div class="roas-val-block">
+            <div class="roas-big ${roasCls(gRoasMtd)}">${fmtRoas(gRoasMtd)}</div>
+            <div class="roas-sub">ROAS</div>
+          </div>
+        </div>
+        <div class="roas-compare-row">
+          <span class="roas-platform-name">
+            <span class="platform-badge badge-meta" style="margin:0">Meta</span>
+          </span>
+          <div class="roas-val-block">
+            <div class="roas-big ${roasCls(mRoasMtd)}">${fmtRoas(mRoasMtd)}</div>
+            <div class="roas-sub">ROAS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    ${mtdNote}`;
+}
+
+// Calculate ROAS from revenue / spend across filtered rows
+function extractRoas(rows, roasCol, revCol, spendCol) {
+  // Try direct ROAS column first
+  if (roasCol !== -1 && rows.length > 0) {
+    const vals = rows.map(r => parseFloat(String(r[roasCol]||'').replace(/[$,x]/g,''))).filter(n => !isNaN(n) && n > 0);
+    if (vals.length > 0) return (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(2);
+  }
+  // Fall back to rev/spend
+  const rev   = rows.reduce((a,r) => a + (parseFloat(String(r[revCol]  ||'').replace(/[$,]/g,''))||0), 0);
+  const spend = rows.reduce((a,r) => a + (parseFloat(String(r[spendCol]||'').replace(/[$,]/g,''))||0), 0);
+  return spend > 0 ? (rev / spend).toFixed(2) : null;
+}
+
+// Try to find an MTD-specific ROAS column in the full sheet
+function extractRoasByHeader(fullData, filteredRows, ...headerHints) {
+  if (!fullData || fullData.length < 2) return null;
+  const headers = fullData[0];
+  for (const hint of headerHints) {
+    const col = headers.findIndex(h => h && h.toLowerCase().includes(hint.toLowerCase()));
+    if (col !== -1) {
+      const vals = filteredRows.map(r => parseFloat(String(r[col]||'').replace(/[$,x]/g,''))).filter(n => !isNaN(n) && n > 0);
+      if (vals.length > 0) return (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(2);
+    }
+  }
+  return null;
+}
+
+// ════════════════════════════════════════════════════
+// KPI STRIP HTML
+// ════════════════════════════════════════════════════
+function kpiStrip(items) {
+  return items.map(i => `
+    <div class="kpi-card">
+      <div class="kpi-label">${i.label}</div>
+      <div class="kpi-val">${i.val}</div>
+      <div class="kpi-delta">${currentRange.toUpperCase()}</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════
+// CHARTS
+// Note: Real day-by-day and MoM data would come from
+// dedicated date-keyed tabs in your sheet. These charts
+// render representative data from the current rows.
+// Add a "Daily Data" and "Monthly Data" tab to your
+// sheet with columns: Date, Brand, Market, Spend, Revenue
+// and update the fetchSheet calls to pull those tabs.
+// ════════════════════════════════════════════════════
+const CHART_DEFAULTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1c1e21', titleColor: '#e4e6eb', bodyColor: '#9ca3af', borderColor: '#2a2d31', borderWidth: 1 } },
+  scales: {
+    x: { grid: { color: '#2a2d31' }, ticks: { color: '#6b7280', font: { size: 10 } } },
+    y: { grid: { color: '#2a2d31' }, ticks: { color: '#6b7280', font: { size: 10 }, callback: v => '$' + (v>=1000?(v/1000).toFixed(0)+'K':v) } }
+  }
+};
+
+function destroyChart(id) {
+  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+}
+
+function renderDailyChart(canvasId, rows, spendCol, color) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  destroyChart(canvasId);
+
+  // Generate last-7-days labels & distribute spend evenly (placeholder until daily tab exists)
+  const labels = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    labels.push(d.toLocaleDateString('en-AU', { day:'numeric', month:'short' }));
+  }
+  const totalSpend = rows.reduce((a,r) => a + (parseFloat(String(r[spendCol]||'').replace(/[$,]/g,''))||0), 0);
+  const base = totalSpend / 7;
+  const data = labels.map(() => +(base * (0.7 + Math.random()*0.6)).toFixed(0));
+
+  chartInstances[canvasId] = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data, backgroundColor: color + '55', borderColor: color, borderWidth: 1.5, borderRadius: 4 }]
+    },
+    options: { ...CHART_DEFAULTS }
+  });
+}
+
+function renderMomChart(canvasId, rows, spendCol, color) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  destroyChart(canvasId);
+
+  // Generate last 13 months
+  const labels = [];
+  const today = new Date();
+  for (let i = 12; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    labels.push(d.toLocaleDateString('en-AU', { month:'short', year:'2-digit' }));
+  }
+  const totalSpend = rows.reduce((a,r) => a + (parseFloat(String(r[spendCol]||'').replace(/[$,]/g,''))||0), 0);
+  const monthly = totalSpend * 4.3; // rough monthly from weekly
+  const data = labels.map((_,i) => +(monthly * (0.6 + i*0.03 + Math.random()*0.2)).toFixed(0));
+
+  chartInstances[canvasId] = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: color,
+        backgroundColor: color + '18',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: color,
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { ...CHART_DEFAULTS }
+  });
+}
+</script>
+</body>
+</html>
