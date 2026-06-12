@@ -3,1318 +3,955 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amire — TBN Dashboard</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<title>TBN Marketing Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
+:root { color-scheme: light; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:        #111214;
-  --sidebar:   #161719;
-  --surface:   #1c1e21;
-  --surface2:  #242628;
-  --border:    #2a2d31;
-  --border2:   #333740;
-  --text:      #e4e6eb;
-  --muted:     #6b7280;
-  --muted2:    #9ca3af;
-  --db:        #e05c5c;
-  --inika:     #4ade80;
-  --raww:      #f59e0b;
-  --accent:    #5b8af5;
-  --green:     #4ade80;
-  --red:       #f87171;
-  --yellow:    #fbbf24;
-  --font:      'Inter', system-ui, sans-serif;
-  --sidebar-w: 220px;
+  --sidebar-w: 228px;
+  --tbn-dark:   #1c1c1c;
+  --tbn-gold:   #c9a96e;
+  --tbn-light:  #f8f7f5;
+  --border:     #e8e8e5;
+  --db-primary:    #b5546a;
+  --db-light:      #fdf2f5;
+  --db-mid:        #d47a92;
+  --inika-primary: #4a7045;
+  --inika-light:   #f1f6ee;
+  --inika-mid:     #7aaa74;
+  --raww-primary:  #5c8a6a;
+  --raww-light:    #f0f6f2;
+  --raww-mid:      #8ab59a;
+  --text:      #1c1c1c;
+  --text-sub:  #666;
+  --text-mute: #999;
+  --success:   #22c55e;
+  --warning:   #f59e0b;
+  --danger:    #ef4444;
+  --accent: var(--tbn-gold);
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
-
 body {
-  background: var(--bg);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--tbn-light);
   color: var(--text);
-  font-family: var(--font);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* ── LOGIN ── */
-#loginScreen {
   display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
+  font-size: 14px;
 }
-
-.login-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 44px 40px 36px;
-  width: 340px;
-}
-
-.login-agency {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-
-.login-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 28px;
-}
-
-.login-card input[type=password] {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 13px;
-  padding: 11px 14px;
-  outline: none;
-  margin-bottom: 10px;
-  transition: border-color 0.15s;
-}
-
-.login-card input[type=password]:focus { border-color: var(--accent); }
-
-.login-btn {
-  width: 100%;
-  background: var(--accent);
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  cursor: pointer;
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 11px;
-  transition: opacity 0.15s;
-}
-.login-btn:hover { opacity: 0.85; }
-.login-error { color: var(--red); font-size: 12px; margin-top: 8px; min-height: 16px; }
-
-/* ── APP SHELL ── */
-#app { display: none; height: 100vh; display: none; flex-direction: row; }
-
+/* ── Sidebar ─────────────────────────────────────────── */
 .sidebar {
   width: var(--sidebar-w);
-  background: var(--sidebar);
-  border-right: 1px solid var(--border);
+  background: var(--tbn-dark);
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
-  overflow-y: auto;
   position: fixed;
-  top: 0; left: 0; bottom: 0;
+  inset: 0 auto 0 0;
+  overflow-y: auto;
+  z-index: 200;
 }
-
-.sidebar-header {
-  padding: 20px 18px 16px;
-  border-bottom: 1px solid var(--border);
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+.logo {
+  padding: 26px 22px 22px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
-
-.sidebar-agency {
-  font-size: 10px;
+.logo-name {
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1.4px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 2px;
+  color: var(--tbn-gold);
 }
-
-.sidebar-client {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
+.logo-sub {
+  font-size: 10.5px;
+  color: rgba(255,255,255,.35);
+  margin-top: 4px;
+  letter-spacing: .3px;
 }
-
-.sidebar-nav { padding: 16px 0; flex: 1; }
-
-.nav-group { margin-bottom: 20px; }
-
+.nav-group { padding: 18px 0 6px; }
 .nav-group-label {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 1.2px;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
-  color: var(--muted);
-  padding: 0 18px;
-  margin-bottom: 6px;
+  color: rgba(255,255,255,.25);
+  padding: 0 22px 8px;
 }
-
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 18px;
-  cursor: pointer;
-  color: var(--muted2);
+  gap: 10px;
+  padding: 9px 22px;
   font-size: 13px;
+  color: rgba(255,255,255,.55);
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all .15s;
+  user-select: none;
+}
+.nav-item:hover { background: rgba(255,255,255,.04); color: rgba(255,255,255,.85); }
+.nav-item.sub { padding-left: 42px; font-size: 12.5px; }
+.nav-item.active {
+  color: #fff;
   font-weight: 500;
-  border-left: 2px solid transparent;
-  transition: all 0.12s;
-  user-select: none;
 }
-
-.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-.nav-item.active { color: var(--text); border-left-color: currentColor; background: rgba(255,255,255,0.04); }
-.nav-item.active .nav-dot { opacity: 1; }
-
+.nav-item.active[data-brand="tbn"]   { border-color: var(--tbn-gold);    background: rgba(201,169,110,.1); }
+.nav-item.active[data-brand="db"]    { border-color: var(--db-primary);  background: rgba(181,84,106,.1);  }
+.nav-item.active[data-brand="inika"] { border-color: var(--inika-primary);background: rgba(74,112,69,.1);  }
+.nav-item.active[data-brand="raww"]  { border-color: var(--raww-primary);background: rgba(92,138,106,.1);  }
 .nav-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  opacity: 0.5;
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
 }
-
-.nav-sub {
-  padding: 5px 18px 5px 33px;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 12px;
-  border-left: 2px solid transparent;
-  transition: all 0.12s;
-  user-select: none;
-}
-
-.nav-sub:hover { color: var(--muted2); }
-.nav-sub.active { color: var(--text); border-left-color: var(--border2); }
-
+.dot-tbn   { background: var(--tbn-gold); }
+.dot-db    { background: var(--db-primary); }
+.dot-inika { background: var(--inika-primary); }
+.dot-raww  { background: var(--raww-primary); }
 .sidebar-footer {
-  padding: 14px 18px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  margin-top: auto;
+  padding: 16px 22px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  font-size: 10.5px;
+  color: rgba(255,255,255,.25);
+  line-height: 1.5;
 }
-
-.sidebar-updated { font-size: 11px; color: var(--muted); }
-
-.logout-btn {
-  background: none;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 11px;
-  font-family: var(--font);
-  padding: 3px 6px;
-  border-radius: 4px;
-  transition: color 0.12s;
-}
-.logout-btn:hover { color: var(--red); }
-
-/* ── MAIN CONTENT ── */
+/* ── Main ────────────────────────────────────────────── */
 .main {
   margin-left: var(--sidebar-w);
   flex: 1;
-  overflow-y: auto;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
-
+/* ── Topbar ──────────────────────────────────────────── */
 .topbar {
-  background: var(--sidebar);
+  background: #fff;
   border-bottom: 1px solid var(--border);
-  padding: 0 28px;
-  height: 52px;
+  padding: 14px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 100;
 }
-
-.topbar-title {
-  font-size: 14px;
-  font-weight: 600;
+.page-title   { font-size: 17px; font-weight: 600; }
+.page-subtitle { font-size: 12px; color: var(--text-mute); margin-top: 2px; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.date-toggle {
+  display: flex;
+  background: #f2f2f0;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
 }
-
-.topbar-right { display: flex; align-items: center; gap: 8px; }
-
-.range-tabs { display: flex; gap: 4px; }
-
-.range-tab {
-  background: var(--surface2);
-  border: 1px solid var(--border);
+.date-btn {
+  padding: 6px 14px;
   border-radius: 6px;
-  color: var(--muted2);
+  font-size: 12.5px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--text-sub);
   cursor: pointer;
-  font-family: var(--font);
+  transition: all .15s;
+  font-family: inherit;
+}
+.date-btn.active {
+  background: #fff;
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.refresh-note {
   font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  transition: all 0.12s;
-}
-.range-tab:hover { color: var(--text); }
-.range-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-.refresh-btn {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--muted2);
-  cursor: pointer;
-  font-family: var(--font);
-  font-size: 11px;
-  padding: 4px 10px;
-  transition: all 0.12s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.refresh-btn:hover { color: var(--text); border-color: var(--border2); }
-
-.spinner {
-  display: inline-block;
-  width: 11px; height: 11px;
-  border: 1.5px solid var(--border2);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── PAGE CONTENT ── */
-.page { display: none; padding: 28px; }
-.page.active { display: block; }
-
-.page-eyebrow {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-
-.page-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.page-title-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* ── KPI STRIP ── */
-.kpi-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.kpi-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px 18px;
-}
-
-.kpi-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-
-.kpi-val {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  margin-bottom: 4px;
-}
-
-.kpi-delta {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-}
-.kpi-delta.up   { color: var(--green); }
-.kpi-delta.down { color: var(--red); }
-
-/* ── SECTION BLOCKS ── */
-.section-block {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-
-.section-block-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.section-block-title {
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.platform-badge {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-.badge-google { background: rgba(66,133,244,0.15); color: #7aabff; }
-.badge-meta   { background: rgba(24,119,242,0.12); color: #6ea3f5; }
-.badge-shopify{ background: rgba(150,191,84,0.15); color: #96bf54; }
-.badge-summary{ background: rgba(91,138,245,0.15); color: #8fb3ff; }
-
-/* ── DATA TABLE ── */
-.data-table-wrap { overflow-x: auto; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead th {
-  background: var(--surface2);
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 9px 16px;
-  text-align: left;
-  text-transform: uppercase;
+  color: var(--text-mute);
   white-space: nowrap;
 }
-
-tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
-tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: rgba(255,255,255,0.02); }
-tbody td { padding: 11px 16px; font-size: 12px; white-space: nowrap; }
-
-.market-tag {
-  background: var(--surface2);
-  border-radius: 4px;
-  color: var(--muted2);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-}
-
-.roas-hi  { color: var(--green);  font-weight: 700; }
-.roas-mid { color: var(--yellow); font-weight: 700; }
-.roas-lo  { color: var(--red);    font-weight: 700; }
-.not-conn { color: var(--muted); font-style: italic; font-size: 11px; }
-
-.pacing-hi  { color: var(--green); }
-.pacing-mid { color: var(--yellow); }
-.pacing-lo  { color: var(--red); }
-
-/* ── CHARTS ── */
-.charts-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-@media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
-
-.chart-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 18px 20px;
-}
-
-.chart-card-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted2);
-  margin-bottom: 14px;
-}
-
-.chart-wrap { position: relative; height: 200px; }
-
-/* ── ROAS COMPARISON TABLE ── */
-.roas-compare-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-}
-
-.roas-compare-grid .roas-col {
-  padding: 16px 20px;
-}
-
-.roas-compare-grid .roas-col:first-child {
-  border-right: 1px solid var(--border);
-}
-
-.roas-col-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 14px;
-}
-
-.roas-compare-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.roas-compare-row:last-child { border-bottom: none; }
-
-.roas-platform-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted2);
+/* ── Data freshness banner ───────────────────────────── */
+.freshness-bar {
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.roas-val-block { text-align: right; }
-
-.roas-big {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-.roas-sub {
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 1px;
-}
-
-.roas-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 0 20px;
-}
-
-/* ── EMPTY / LOADING ── */
-.state-msg {
-  padding: 36px;
-  text-align: center;
-  color: var(--muted);
+  background: #fffbf0;
+  border: 1px solid #f0e6c8;
+  border-radius: 8px;
+  padding: 9px 16px;
+  margin-bottom: 22px;
   font-size: 12px;
+  color: #6b5a2e;
+  flex-wrap: wrap;
 }
+.freshness-bar .fb-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.freshness-bar .fb-main {
+  font-weight: 600;
+  color: #5a4a20;
+  margin-right: 4px;
+}
+.freshness-bar .fb-sep {
+  color: #c9b47a;
+  margin: 0 6px;
+}
+.freshness-bar .fb-platform {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.freshness-bar .fb-platform strong {
+  font-weight: 600;
+}
+/* ── Content ─────────────────────────────────────────── */
+.content { padding: 28px 32px 40px; flex: 1; }
+/* ── KPI Cards ───────────────────────────────────────── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 26px;
+}
+.kpi-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 12px 12px 0 0;
+}
+.kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 10px;
+}
+.kpi-val {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+}
+.kpi-hint {
+  font-size: 11.5px;
+  color: var(--text-mute);
+  margin-top: 6px;
+}
+.pill {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 6px;
+}
+.pill-green  { background: #dcfce7; color: #15803d; }
+.pill-yellow { background: #fef9c3; color: #92400e; }
+.pill-red    { background: #fee2e2; color: #b91c1c; }
+/* ── Charts ──────────────────────────────────────────── */
+.charts-row {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+.chart-wrap { position: relative; height: 210px; }
+/* ── Channel Sections ────────────────────────────────── */
+.section {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: #fafaf8;
+  gap: 10px;
+}
+.channel-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+.tag-google  { background: #e8f0fe; color: #1a73e8; }
+.tag-meta    { background: #e8effe; color: #0866ff; }
+.tag-shopify { background: #eaf5ea; color: #2d7a2d; }
+/* ── Table ───────────────────────────────────────────── */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th {
+  padding: 9px 16px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  background: #fafaf8;
+  border-bottom: 1px solid var(--border);
+}
+.tbl td {
+  padding: 11px 16px;
+  border-bottom: 1px solid #f4f4f2;
+  vertical-align: middle;
+}
+.tbl tr:last-child td  { border-bottom: none; }
+.tbl tbody tr:hover td { background: #fafaf8; }
+.brand-cell { font-weight: 500; }
+.mkt-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #f0f0ee;
+  color: #666;
+  margin-left: 5px;
+}
+.pace-wrap { display: flex; align-items: center; gap: 8px; }
+.pace-bar  { flex: 1; min-width: 50px; max-width: 90px; height: 4px; background: #eee; border-radius: 2px; overflow: hidden; }
+.pace-fill { height: 100%; border-radius: 2px; }
+.roas-num { font-weight: 700; font-size: 13.5px; }
+.c-green  { color: #16a34a; }
+.c-yellow { color: #d97706; }
+.c-red    { color: #dc2626; }
+/* ── MoM / YoY comparison ────────────────────────────── */
+.cmp-row { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
+.cmp-badge {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: 20px;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.cmp-up   { background: #dcfce7; color: #15803d; }
+.cmp-down { background: #fee2e2; color: #b91c1c; }
+.cmp-flat { background: #f3f4f6; color: #6b7280; }
+/* ── ROAS summary table ──────────────────────────────── */
+.roas-summary {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 26px;
+}
+.roas-summary-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: #fafaf8;
+}
+.roas-summary-title { font-size: 13px; font-weight: 600; }
+.roas-summary .tbl th { background: #f5f5f3; }
+.roas-summary .tbl th.group-google { background: #e8f0fe; color: #1a73e8; text-align: center; }
+.roas-summary .tbl th.group-meta   { background: #e8effe; color: #0866ff; text-align: center; }
+.roas-track-good { background: #dcfce7; color: #15803d; font-weight: 700; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+.roas-track-warn { background: #fef9c3; color: #92400e; font-weight: 700; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+.roas-track-bad  { background: #fee2e2; color: #b91c1c; font-weight: 700; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+.roas-divider { width: 6px; background: var(--border); }
+/* ── Daily section ───────────────────────────────────── */
+.daily-section {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.daily-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: #fafaf8;
+}
+.daily-title { font-size: 13px; font-weight: 600; }
+.daily-sub   { font-size: 11px; color: var(--text-mute); }
+.daily-chart-wrap { position: relative; height: 240px; padding: 20px 20px 8px; }
+.daily-tbl-wrap   { overflow-x: auto; }
 </style>
 </head>
 <body>
-
-<!-- ══ LOGIN ══════════════════════════════════════════════ -->
-<div id="loginScreen">
-  <div class="login-card">
-    <div class="login-agency">Amire</div>
-    <div class="login-title">TBN Dashboard</div>
-    <input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">Sign in</button>
-    <div class="login-error" id="loginError"></div>
+<!-- ── Sidebar ──────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-name">TBN</div>
+    <div class="logo-sub">Marketing Dashboard</div>
   </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-label">Portfolio</div>
+      <div class="nav-item" data-brand="tbn" data-page="overview" onclick="nav(this)">
+        <span class="nav-dot dot-tbn"></span> All Brands
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">DB Designer Brands</div>
+      <div class="nav-item" data-brand="db" data-page="db-summary" onclick="nav(this)">
+        <span class="nav-dot dot-db"></span> DB Summary
+      </div>
+      <div class="nav-item sub" data-brand="db" data-page="DB_AU" onclick="nav(this)">Australia</div>
+      <div class="nav-item sub" data-brand="db" data-page="DB_NZ" onclick="nav(this)">New Zealand</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">INIKA Organic</div>
+      <div class="nav-item" data-brand="inika" data-page="inika-summary" onclick="nav(this)">
+        <span class="nav-dot dot-inika"></span> INIKA Summary
+      </div>
+      <div class="nav-item sub" data-brand="inika" data-page="INIKA_AU" onclick="nav(this)">Australia</div>
+      <div class="nav-item sub" data-brand="inika" data-page="INIKA_NZ" onclick="nav(this)">New Zealand</div>
+      <div class="nav-item sub" data-brand="inika" data-page="INIKA_US" onclick="nav(this)">United States</div>
+      <div class="nav-item sub" data-brand="inika" data-page="INIKA_UK" onclick="nav(this)">United Kingdom</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">RAWW Cosmetics</div>
+      <div class="nav-item" data-brand="raww" data-page="RAWW_AU" onclick="nav(this)">
+        <span class="nav-dot dot-raww"></span> RAWW Australia
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    Auto-refreshed daily at 6am AEST<br>
+    <span id="refreshTs">Sample data — connect Apps Script for live data</span>
+  </div>
+</aside>
+<!-- ── Main ─────────────────────────────────────────── -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="pgTitle">All Brands Overview</div>
+      <div class="page-subtitle" id="pgSub">TBN Portfolio — all 7 accounts</div>
+    </div>
+    <div class="topbar-right">
+      <div class="date-toggle">
+        <button class="date-btn active" id="btn-mtd"     onclick="setRange('mtd')">MTD</button>
+        <button class="date-btn"        id="btn-last7"   onclick="setRange('last7')">Last 7 Days</button>
+        <button class="date-btn"        id="btn-last30"  onclick="setRange('last30')">Last 30 Days</button>
+        <button class="date-btn"        id="btn-last6m"  onclick="setRange('last6m')">Last 6 Months</button>
+        <button class="date-btn"        id="btn-last12m" onclick="setRange('last12m')">Last 12 Months</button>
+      </div>
+      <span class="refresh-note" id="rangeLabel">2026-06-01 → 2026-06-01</span>
+    </div>
+  </div>
+  <!-- Page content -->
+  <div class="content" id="content"></div>
 </div>
-
-<!-- ══ APP ═════════════════════════════════════════════════ -->
-<div id="app">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-agency">Amire</div>
-      <div class="sidebar-client">TBN Dashboard</div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <!-- Portfolio -->
-      <div class="nav-group">
-        <div class="nav-group-label">Portfolio</div>
-        <div class="nav-item active" onclick="navigate('all')" id="nav-all">
-          <span class="nav-dot" style="background:var(--muted2)"></span>
-          All Brands
-        </div>
-      </div>
-
-      <!-- DB -->
-      <div class="nav-group">
-        <div class="nav-group-label">DB Designer Brands</div>
-        <div class="nav-item" onclick="navigate('db')" id="nav-db">
-          <span class="nav-dot" style="background:var(--db)"></span>
-          DB Summary
-        </div>
-        <div class="nav-sub" onclick="navigate('db-au')" id="nav-db-au">Australia</div>
-        <div class="nav-sub" onclick="navigate('db-nz')" id="nav-db-nz">New Zealand</div>
-      </div>
-
-      <!-- INIKA -->
-      <div class="nav-group">
-        <div class="nav-group-label">Inika Organic</div>
-        <div class="nav-item" onclick="navigate('inika')" id="nav-inika">
-          <span class="nav-dot" style="background:var(--inika)"></span>
-          INIKA Summary
-        </div>
-        <div class="nav-sub" onclick="navigate('inika-au')" id="nav-inika-au">Australia</div>
-        <div class="nav-sub" onclick="navigate('inika-nz')" id="nav-inika-nz">New Zealand</div>
-        <div class="nav-sub" onclick="navigate('inika-us')" id="nav-inika-us">United States</div>
-        <div class="nav-sub" onclick="navigate('inika-uk')" id="nav-inika-uk">United Kingdom</div>
-      </div>
-
-      <!-- RAWW -->
-      <div class="nav-group">
-        <div class="nav-group-label">Raww Cosmetics</div>
-        <div class="nav-item" onclick="navigate('raww')" id="nav-raww">
-          <span class="nav-dot" style="background:var(--raww)"></span>
-          RAWW Australia
-        </div>
-      </div>
-    </nav>
-
-    <div class="sidebar-footer">
-      <span class="sidebar-updated" id="sidebarUpdated">—</span>
-      <button class="logout-btn" onclick="logout()">Sign out</button>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-    <div class="topbar">
-      <div class="topbar-title" id="topbarTitle">All Brands</div>
-      <div class="topbar-right">
-        <div class="range-tabs">
-          <button class="range-tab active" onclick="setRange('7d',this)">7D</button>
-          <button class="range-tab" onclick="setRange('mtd',this)">MTD</button>
-          <button class="range-tab" onclick="setRange('mom',this)">MoM</button>
-          <button class="range-tab" onclick="setRange('yoy',this)">YoY</button>
-        </div>
-        <button class="refresh-btn" onclick="loadData()">
-          <span class="spinner" id="spinner" style="display:none"></span>
-          ↻ Refresh
-        </button>
-      </div>
-    </div>
-
-    <!-- ── ALL BRANDS PAGE ── -->
-    <div class="page active" id="page-all">
-      <div class="page-eyebrow">Portfolio Overview</div>
-      <div class="page-title">All Brands</div>
-      <div class="kpi-strip" id="kpi-all"></div>
-      <div class="section-block">
-        <div class="section-block-header">
-          <span class="section-block-title"><span class="platform-badge badge-summary">Summary</span> Combined ROAS by Brand & Market</span>
-        </div>
-        <div class="data-table-wrap" id="tbl-all-roas"><div class="state-msg"><span class="spinner"></span></div></div>
-      </div>
-      <div class="charts-row">
-        <div class="chart-card">
-          <div class="chart-card-title">Day-by-Day — Total Ad Spend</div>
-          <div class="chart-wrap"><canvas id="chart-all-daily"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-card-title">Month on Month — Last 13 Months</div>
-          <div class="chart-wrap"><canvas id="chart-all-mom"></canvas></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── BRAND / MARKET PAGES (generated) ── -->
-    <div id="dynamicPages"></div>
-
-  </main>
-</div>
-
 <script>
-// ════════════════════════════════════════════════════
-// CONFIG
-// ════════════════════════════════════════════════════
-const PASSWORD = 'dashboard2025';
-const SHEET_ID = '1DAScvOQ7a4qzy2VtvmBY9AHUEjRnaAuJAQOhui3zH9U';
-const TABS = {
-  platform: 'Platform Summary',
-  shopify:  'Shopify Data',
-  meta:     'Meta Data',
-  google:   'Google Ads Data'
-};
+// ─── Aggregate data (period totals) ──────────────────────────────────────────
+var DATA = {
+  DB_AU: {
+    mtd:    { gSpend:18500, gRevenue:95000,  gConv:1850, gClicks:28000, mSpend:17200, mRevenue:88000,  mPurch:1720, mClicks:42000, orders:2450, gross:142000, disc:8500,  ret:3200, ship:4800, tax:12800, net:130300, budget:51000 },
+    last7:  { gSpend:4200,  gRevenue:21500,  gConv:420,  gClicks:6400,  mSpend:3900,  mRevenue:19800,  mPurch:390,  mClicks:9600,  orders:560,  gross:32000,  disc:1900,  ret:700,  ship:1100, tax:2900,  net:29400,  budget:51000 },
+    last30: { gSpend:21000, gRevenue:108000, gConv:2100, gClicks:32000, mSpend:19500, mRevenue:99000,  mPurch:1950, mClicks:48000, orders:2780, gross:161000, disc:9500,  ret:3600, ship:5400, tax:14500, net:147900, budget:51000 },
+    last6m: { gSpend:118000,gRevenue:590000, gConv:11200,gClicks:172000,mSpend:109000,mRevenue:545000, mPurch:10600,mClicks:256000,orders:15800,gross:870000, disc:52000, ret:20500,ship:28800,tax:78300, net:797500, budget:51000 },
+    last12m:{ gSpend:228000,gRevenue:1140000,gConv:21600,gClicks:332000,mSpend:211000,mRevenue:1052000,mPurch:20500,mClicks:494000,orders:30500,gross:1680000,disc:100800,ret:39500,ship:55600,tax:151200,net:1539700,budget:51000 }
+  },
+  DB_NZ: {
+    mtd:    { gSpend:1650,  gRevenue:7200,   gConv:310,  gClicks:5100,  mSpend:1480,  mRevenue:6400,   mPurch:280,  mClicks:8200,  orders:420,  gross:9800,   disc:580,   ret:240,  ship:680,  tax:880,   net:8980,   budget:2000 },
+    last7:  { gSpend:380,   gRevenue:1650,   gConv:71,   gClicks:1170,  mSpend:340,   mRevenue:1470,   mPurch:64,   mClicks:1880,  orders:97,   gross:2250,   disc:133,   ret:55,   ship:156,  tax:202,   net:2062,   budget:2000 },
+    last30: { gSpend:1870,  gRevenue:8160,   gConv:351,  gClicks:5780,  mSpend:1680,  mRevenue:7248,   mPurch:317,  mClicks:9290,  orders:476,  gross:11102,  disc:657,   ret:272,  ship:770,  tax:997,   net:10173,  budget:2000 },
+    last6m: { gSpend:10800, gRevenue:47100,  gConv:2030, gClicks:33500, mSpend:9700,  mRevenue:42300,  mPurch:1820, mClicks:51000, orders:2760, gross:64200,  disc:3800,  ret:1570, ship:4460, tax:5780,  net:58830,  budget:2000 },
+    last12m:{ gSpend:20900, gRevenue:91000,  gConv:3920, gClicks:64700, mSpend:18700, mRevenue:81700,  mPurch:3520, mClicks:98500, orders:5330, gross:123900, disc:7350,  ret:3030, ship:8610, tax:11160, net:113520, budget:2000 }
+  },
 
-// Page definitions
-const PAGES = {
-  'all':      { label: 'All Brands',        brand: null,    market: null,   color: '#9ca3af' },
-  'db':       { label: 'DB Summary',         brand: 'DB',    market: null,   color: '#e05c5c' },
-  'db-au':    { label: 'DB — Australia',     brand: 'DB',    market: 'AU',   color: '#e05c5c' },
-  'db-nz':    { label: 'DB — New Zealand',   brand: 'DB',    market: 'NZ',   color: '#e05c5c' },
-  'inika':    { label: 'INIKA Summary',      brand: 'INIKA', market: null,   color: '#4ade80' },
-  'inika-au': { label: 'INIKA — Australia',  brand: 'INIKA', market: 'AU',   color: '#4ade80' },
-  'inika-nz': { label: 'INIKA — New Zealand',brand: 'INIKA', market: 'NZ',   color: '#4ade80' },
-  'inika-us': { label: 'INIKA — United States',brand:'INIKA',market: 'US',   color: '#4ade80' },
-  'inika-uk': { label: 'INIKA — United Kingdom',brand:'INIKA',market:'UK',   color: '#4ade80' },
-  'raww':     { label: 'RAWW Australia',     brand: 'RAWW',  market: 'AU',   color: '#f59e0b' }
-};
-
-// ════════════════════════════════════════════════════
-// STATE
-// ════════════════════════════════════════════════════
-let currentPage  = 'all';
-let currentRange = '7d';
-let sheetData    = {};
-let chartInstances = {};
-
-// ════════════════════════════════════════════════════
-// AUTH
-// ════════════════════════════════════════════════════
-function doLogin() {
-  const pw = document.getElementById('pwInput').value;
-  if (pw !== PASSWORD) {
-    document.getElementById('loginError').textContent = 'Incorrect password.';
-    return;
+  INIKA_AU: {
+    mtd:    { gSpend:29000, gRevenue:55000,  gConv:2100, gClicks:38000, mSpend:27500, mRevenue:52000,  mPurch:2000, mClicks:58000, orders:3200, gross:78000,  disc:5200,  ret:2100, ship:3800, tax:7100,  net:70700,  budget:83000 },
+    last7:  { gSpend:6600,  gRevenue:12500,  gConv:478,  gClicks:8650,  mSpend:6250,  mRevenue:11820,  mPurch:455,  mClicks:13200, orders:728,  gross:17745,  disc:1183,  ret:478,  ship:864,  tax:1615,  net:16084,  budget:83000 },
+    last30: { gSpend:32850, gRevenue:62325,  gConv:2379, gClicks:43070, mSpend:31175, mRevenue:58916,  mPurch:2266, mClicks:65714, orders:3626, gross:88374,  disc:5891,  ret:2380, ship:4308, tax:8049,  net:80103,  budget:83000 },
+    last6m: { gSpend:188000,gRevenue:357000, gConv:13700,gClicks:248000,mSpend:178000,mRevenue:338000, mPurch:13000,mClicks:379000,orders:22000,gross:509000, disc:33900, ret:13700,ship:24800,tax:46000, net:461400, budget:83000 },
+    last12m:{ gSpend:363000,gRevenue:689000, gConv:26500,gClicks:479000,mSpend:344000,mRevenue:652000, mPurch:25100,mClicks:731000,orders:42500,gross:982000, disc:65500, ret:26500,ship:47900,tax:88800, net:890000, budget:83000 }
+  },
+  INIKA_NZ: {
+    mtd:    { gSpend:3700,  gRevenue:5100,   gConv:380,  gClicks:7200,  mSpend:3500,  mRevenue:4800,   mPurch:360,  mClicks:9800,  orders:540,  gross:7200,   disc:480,   ret:190,  ship:520,  tax:650,   net:6530,   budget:10000 },
+    last7:  { gSpend:842,   gRevenue:1161,   gConv:86,   gClicks:1638,  mSpend:797,   mRevenue:1092,   mPurch:82,   mClicks:2231,  orders:123,  gross:1638,   disc:109,   ret:43,   ship:118,  tax:148,   net:1486,   budget:10000 },
+    last30: { gSpend:4196,  gRevenue:5783,   gConv:431,  gClicks:8164,  mSpend:3969,  mRevenue:5443,   mPurch:408,  mClicks:11115, orders:612,  gross:8162,   disc:544,   ret:215,  ship:589,  tax:737,   net:7403,   budget:10000 },
+    last6m: { gSpend:24100, gRevenue:33200,  gConv:2480, gClicks:47000, mSpend:22800, mRevenue:31400,  mPurch:2350, mClicks:64000, orders:3540, gross:47000,  disc:3130,  ret:1240, ship:3390, tax:4230,  net:42630,  budget:10000 },
+    last12m:{ gSpend:46600, gRevenue:64100,  gConv:4790, gClicks:90700, mSpend:44100, mRevenue:60700,  mPurch:4540, mClicks:123500,orders:6830, gross:90700,  disc:6050,  ret:2390, ship:6550, tax:8160,  net:82260,  budget:10000 }
+  },
+  INIKA_US: {
+    mtd:    { gSpend:9200,  gRevenue:35000,  gConv:1050, gClicks:18000, mSpend:8700,  mRevenue:33000,  mPurch:990,  mClicks:25000, orders:1450, gross:48000,  disc:3200,  ret:1300, ship:2200, tax:4300,  net:43500,  budget:20000 },
+    last7:  { gSpend:2093,  gRevenue:7963,   gConv:239,  gClicks:4096,  mSpend:1980,  mRevenue:7513,   mPurch:225,  mClicks:5688,  orders:330,  gross:10925,  disc:728,   ret:296,  ship:501,  tax:979,   net:9901,   budget:20000 },
+    last30: { gSpend:10426, gRevenue:39675,  gConv:1190, gClicks:20398, mSpend:9861,  mRevenue:37413,  mPurch:1122, mClicks:28322, orders:1643, gross:54432,  disc:3626,  ret:1474, ship:2493, tax:4873,  net:49332,  budget:20000 },
+    last6m: { gSpend:60100, gRevenue:228600, gConv:6870, gClicks:117900,mSpend:56900, mRevenue:216300, mPurch:6500, mClicks:163900,orders:9490, gross:314900, disc:20980, ret:8510, ship:14400,tax:28300, net:285410, budget:20000 },
+    last12m:{ gSpend:116000,gRevenue:441000, gConv:13270,gClicks:227500,mSpend:109800,mRevenue:417500, mPurch:12540,mClicks:316400,orders:18330,gross:607500, disc:40500, ret:16450,ship:27800,tax:54700, net:550550, budget:20000 }
+  },
+  INIKA_UK: {
+    mtd:    { gSpend:9800,  gRevenue:20000,  gConv:820,  gClicks:15000, mSpend:9300,  mRevenue:19000,  mPurch:780,  mClicks:20000, orders:1100, gross:28000,  disc:1800,  ret:750,  ship:1400, tax:2500,  net:25450,  budget:22000 },
+    last7:  { gSpend:2230,  gRevenue:4551,   gConv:187,  gClicks:3413,  mSpend:2117,  mRevenue:4323,   mPurch:177,  mClicks:4552,  orders:250,  gross:6372,   disc:410,   ret:171,  ship:319,  tax:569,   net:5791,   budget:22000 },
+    last30: { gSpend:11105, gRevenue:22680,  gConv:929,  gClicks:17003, mSpend:10543, mRevenue:21527,  mPurch:884,  mClicks:22680, orders:1247, gross:31736,  disc:2040,  ret:850,  ship:1587, tax:2834,  net:28846,  budget:22000 },
+    last6m: { gSpend:64000, gRevenue:130700, gConv:5370, gClicks:98000, mSpend:60700, mRevenue:123900, mPurch:5090, mClicks:130700,orders:7220, gross:183600, disc:11800, ret:4910, ship:9200, tax:16500, net:166890, budget:22000 },
+    last12m:{ gSpend:123500,gRevenue:252200, gConv:10360,gClicks:189100,mSpend:117100,mRevenue:239100, mPurch:9820, mClicks:252200,orders:13930,gross:354200, disc:22800, ret:9490, ship:17760,tax:31900, net:321910, budget:22000 }
+  },
+  RAWW_AU: {
+    mtd:    { gSpend:3200,  gRevenue:17500,  gConv:680,  gClicks:12000, mSpend:3000,  mRevenue:16500,  mPurch:640,  mClicks:18000, orders:920,  gross:22000,  disc:1400,  ret:560,  ship:1000, tax:2000,  net:20040,  budget:12000 },
+    last7:  { gSpend:728,   gRevenue:3981,   gConv:155,  gClicks:2730,  mSpend:683,   mRevenue:3754,   mPurch:146,  mClicks:4096,  orders:209,  gross:5005,   disc:319,   ret:127,  ship:228,  tax:455,   net:4559,   budget:12000 },
+    last30: { gSpend:3626,  gRevenue:19838,  gConv:771,  gClicks:13598, mSpend:3400,  mRevenue:18706,  mPurch:725,  mClicks:20398, orders:1043, gross:24941,  disc:1587,  ret:635,  ship:1134, tax:2268,  net:22719,  budget:12000 },
+    last6m: { gSpend:20900, gRevenue:114300, gConv:4430, gClicks:78200, mSpend:19700, mRevenue:107800, mPurch:4180, mClicks:117300,orders:6010, gross:143200, disc:9120,  ret:3670, ship:6540, tax:12900, net:130410, budget:12000 },
+    last12m:{ gSpend:40400, gRevenue:220700, gConv:8560, gClicks:151000,mSpend:38100, mRevenue:208200, mPurch:8070, mClicks:226500,orders:11600,gross:276600, disc:17600, ret:7090, ship:12630,tax:24900, net:251910, budget:12000 }
   }
-  document.getElementById('loginScreen').style.display = 'none';
-  const app = document.getElementById('app');
-  app.style.display = 'flex';
-  buildDynamicPages();
-  loadData();
+};
+// ─── MoM / YoY comparison data ───────────────────────────────────────────────
+var COMPARE = {
+  DB_AU:    { mom:{ spend:33800, net:118200, roas:3.50, conv:3320 }, yoy:{ spend:28600, net:97400,  roas:3.40, conv:2780 } },
+  DB_NZ:    { mom:{ spend:2950,  net:7820,   roas:2.65, conv:510  }, yoy:{ spend:2540,  net:6510,   roas:2.56, conv:440  } },
+  INIKA_AU: { mom:{ spend:53000, net:64200,  roas:1.21, conv:3680 }, yoy:{ spend:44800, net:53700,  roas:1.20, conv:3100 } },
+  INIKA_NZ: { mom:{ spend:6700,  net:5980,   roas:0.89, conv:680  }, yoy:{ spend:5640,  net:4990,   roas:0.89, conv:570  } },
+  INIKA_US: { mom:{ spend:17100, net:38800,  roas:2.27, conv:1780 }, yoy:{ spend:14400, net:31200,  roas:2.17, conv:1500 } },
+  INIKA_UK: { mom:{ spend:17800, net:23100,  roas:1.30, conv:1460 }, yoy:{ spend:15000, net:18900,  roas:1.26, conv:1230 } },
+  RAWW_AU:  { mom:{ spend:5800,  net:18200,  roas:3.14, conv:1160 }, yoy:{ spend:4900,  net:14800,  roas:3.02, conv:980  } }
+};
+// ─── ROAS targets — sourced from TBN Monthly Budget sheet (June 2026) ────────
+// https://docs.google.com/spreadsheets/d/1k6Ij6EHDvx3dn2jyskKEQ2XkC5UMiYtb07-3pfqSeQI
+var ROAS_TARGETS = {
+  DB_AU:    { gTarget: 12.12, mTarget: 9.28  },
+  DB_NZ:    { gTarget: 2.21,  mTarget: 0     },
+  INIKA_AU: { gTarget: 7.39,  mTarget: 8.00  },
+  INIKA_NZ: { gTarget: 6.54,  mTarget: 3.87  },
+  INIKA_US: { gTarget: 8.45,  mTarget: 4.89  },
+  INIKA_UK: { gTarget: 4.05,  mTarget: 2.55  },
+  RAWW_AU:  { gTarget: 4.75,  mTarget: 4.58  }
+};
+// ─── Daily data — last 30 days ────────────────────────────────────────────────
+function makeDailyData(baseSpend, baseNet, days) {
+  var rows = []; var d = new Date('2026-05-02');
+  for (var i = 0; i < days; i++) {
+    var noise = 0.7 + Math.random() * 0.6;
+    var wknd  = (d.getDay()===0||d.getDay()===6) ? 0.65 : 1;
+    var s = Math.round(baseSpend * noise * wknd);
+    var n = Math.round(baseNet   * noise * wknd * (1 + Math.random()*0.3));
+    var c = Math.round((s/baseSpend) * (baseNet/baseSpend) * 35 * noise);
+    var r = s > 0 ? parseFloat((n/s).toFixed(2)) : 0;
+    rows.push({ date: d.toISOString().slice(0,10), spend:s, net:n, roas:r, conv:c });
+    d.setDate(d.getDate()+1);
+  }
+  return rows;
 }
-
-function logout() {
-  document.getElementById('pwInput').value = '';
-  document.getElementById('loginError').textContent = '';
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-}
-
-// ════════════════════════════════════════════════════
-// BUILD DYNAMIC PAGES
-// ════════════════════════════════════════════════════
-function buildDynamicPages() {
-  const container = document.getElementById('dynamicPages');
-  const keys = Object.keys(PAGES).filter(k => k !== 'all');
-  let html = '';
-  keys.forEach(key => {
-    const p = PAGES[key];
-    html += `
-    <div class="page" id="page-${key}">
-      <div class="page-eyebrow">${getBreadcrumb(key)}</div>
-      <div class="page-title">
-        <span class="page-title-dot" style="background:${p.color}"></span>
-        ${p.label}
-      </div>
-      <div class="kpi-strip" id="kpi-${key}"></div>
-
-      <!-- ROAS Comparison -->
-      <div class="section-block">
-        <div class="section-block-header">
-          <span class="section-block-title"><span class="platform-badge badge-summary">ROAS</span> Google Ads vs Meta — MTD &amp; Last 7 Days</span>
-        </div>
-        <div id="tbl-${key}-roas-compare"><div class="state-msg"><span class="spinner"></span></div></div>
-      </div>
-
-      <!-- Google Ads -->
-      <div class="section-block">
-        <div class="section-block-header">
-          <span class="section-block-title"><span class="platform-badge badge-google">Google Ads</span> Performance</span>
-        </div>
-        <div class="data-table-wrap" id="tbl-${key}-google"><div class="state-msg"><span class="spinner"></span></div></div>
-      </div>
-
-      <!-- Meta -->
-      <div class="section-block">
-        <div class="section-block-header">
-          <span class="section-block-title"><span class="platform-badge badge-meta">Meta</span> Performance</span>
-        </div>
-        <div class="data-table-wrap" id="tbl-${key}-meta"><div class="state-msg"><span class="spinner"></span></div></div>
-      </div>
-
-      <!-- Shopify -->
-      <div class="section-block">
-        <div class="section-block-header">
-          <span class="section-block-title"><span class="platform-badge badge-shopify">Shopify</span> Sales</span>
-        </div>
-        <div class="data-table-wrap" id="tbl-${key}-shopify"><div class="state-msg"><span class="spinner"></span></div></div>
-      </div>
-
-      <!-- Charts -->
-      <div class="charts-row">
-        <div class="chart-card">
-          <div class="chart-card-title">Day-by-Day — Total Ad Spend</div>
-          <div class="chart-wrap"><canvas id="chart-${key}-daily"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-card-title">Month on Month — Last 13 Months</div>
-          <div class="chart-wrap"><canvas id="chart-${key}-mom"></canvas></div>
-        </div>
-      </div>
-    </div>`;
+// Seeded random for consistent daily data
+(function(){
+  var _seeds = { DB_AU:1, DB_NZ:2, INIKA_AU:3, INIKA_NZ:4, INIKA_US:5, INIKA_UK:6, RAWW_AU:7 };
+  var _bases  = { DB_AU:[1300,4900], DB_NZ:[110,340], INIKA_AU:[2000,2700], INIKA_NZ:[250,250], INIKA_US:[680,1650], INIKA_UK:[740,950], RAWW_AU:[220,760] };
+  var origRandom = Math.random;
+  window.DAILY = {};
+  Object.keys(_seeds).forEach(function(k){
+    var seed = _seeds[k];
+    Math.random = (function(s){ return function(){ s = Math.sin(s)*10000; return s - Math.floor(s); }; })(seed);
+    window.DAILY[k] = makeDailyData(_bases[k][0], _bases[k][1], 30);
   });
-  container.innerHTML = html;
-}
+  Math.random = origRandom;
+})();
 
-function getBreadcrumb(key) {
-  const p = PAGES[key];
-  if (!p.market) return p.brand + ' · Summary';
-  return p.brand + ' · ' + p.market;
+var PAGE_CFG = {
+  'overview':      { title: 'All Brands Overview',       sub: 'TBN Portfolio — all 7 accounts',  color: '#c9a96e', keys: ['DB_AU','DB_NZ','INIKA_AU','INIKA_NZ','INIKA_US','INIKA_UK','RAWW_AU'], single: false },
+  'db-summary':    { title: 'DB Designer Brands',        sub: 'AU + NZ combined',                color: '#b5546a', keys: ['DB_AU','DB_NZ'],                                                         single: false },
+  'DB_AU':         { title: 'DB Australia',              sub: 'DB Designer Brands — AU',         color: '#b5546a', keys: ['DB_AU'],    single: true },
+  'DB_NZ':         { title: 'DB New Zealand',            sub: 'DB Designer Brands — NZ',         color: '#b5546a', keys: ['DB_NZ'],    single: true },
+  'inika-summary': { title: 'INIKA Organic',             sub: 'AU + NZ + US + UK combined',      color: '#4a7045', keys: ['INIKA_AU','INIKA_NZ','INIKA_US','INIKA_UK'],                             single: false },
+  'INIKA_AU':      { title: 'INIKA Australia',           sub: 'INIKA Organic — AU',              color: '#4a7045', keys: ['INIKA_AU'], single: true },
+  'INIKA_NZ':      { title: 'INIKA New Zealand',         sub: 'INIKA Organic — NZ',              color: '#4a7045', keys: ['INIKA_NZ'], single: true },
+  'INIKA_US':      { title: 'INIKA United States',       sub: 'INIKA Organic — US',              color: '#4a7045', keys: ['INIKA_US'], single: true },
+  'INIKA_UK':      { title: 'INIKA United Kingdom',      sub: 'INIKA Organic — UK',              color: '#4a7045', keys: ['INIKA_UK'], single: true },
+  'RAWW_AU':       { title: 'RAWW Cosmetics Australia',  sub: 'RAWW Cosmetics — AU',             color: '#5c8a6a', keys: ['RAWW_AU'],  single: true }
+};
+var RANGE_META = {
+  mtd:     { label: 'MTD',            dates: '2026-06-01 → today' },
+  last7:   { label: 'Last 7 Days',    dates: '2026-05-25 → 2026-06-01' },
+  last30:  { label: 'Last 30 Days',   dates: '2026-05-02 → 2026-06-01' },
+  last6m:  { label: 'Last 6 Months',  dates: '2025-12-01 → 2026-06-01' },
+  last12m: { label: 'Last 12 Months', dates: '2025-06-01 → 2026-06-01' }
+};
+var state = { page: 'overview', range: 'mtd' };
+var chartReg = {};
+// ─── Formatters ───────────────────────────────────────────────────────────────
+function $f(n)    { return '$' + Math.round(n||0).toLocaleString('en-AU'); }
+function nf(n)    { return Math.round(n||0).toLocaleString('en-AU'); }
+function pct(n)   { return ((n||0)*100).toFixed(1) + '%'; }
+function roasF(n) { return (n||0).toFixed(2) + 'x'; }
+function roasCls(r) { return r >= 4 ? 'c-green' : r >= 2 ? 'c-yellow' : 'c-red'; }
+function pillCls(p) { return p <= 1.05 ? 'pill-green' : p <= 1.2 ? 'pill-yellow' : 'pill-red'; }
+function chgBadge(cur, prev, label) {
+  if (!prev || prev === 0) return '';
+  var p = ((cur - prev) / Math.abs(prev)) * 100;
+  var cls = p > 1 ? 'cmp-up' : p < -1 ? 'cmp-down' : 'cmp-flat';
+  var arrow = p > 1 ? '▲' : p < -1 ? '▼' : '→';
+  return '<span class="cmp-badge '+cls+'">'+arrow+' '+Math.abs(p).toFixed(1)+'% '+label+'</span>';
 }
-
-// ════════════════════════════════════════════════════
-// NAVIGATION
-// ════════════════════════════════════════════════════
-function navigate(key) {
-  currentPage = key;
-  // Hide all pages
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + key).classList.add('active');
-  // Update nav highlights
-  document.querySelectorAll('.nav-item, .nav-sub').forEach(el => el.classList.remove('active'));
-  const navEl = document.getElementById('nav-' + key);
-  if (navEl) navEl.classList.add('active');
-  // Topbar title
-  document.getElementById('topbarTitle').textContent = PAGES[key]?.label || key;
-  renderPage(key);
+// ─── Data freshness banner ────────────────────────────────────────────────────
+// Shows data refresh cadence and reporting delay per platform on every page.
+// Update these values if platform delays change.
+var PLATFORM_DELAYS = [
+  { name: 'Google Ads', delay: '~2 day delay' },
+  { name: 'Meta',       delay: '~2 day delay' },
+  { name: 'Shopify',    delay: '~1 day delay' }
+];
+function renderFreshnessBar() {
+  var parts = PLATFORM_DELAYS.map(function(p) {
+    return '<span class="fb-platform"><strong>'+p.name+':</strong> '+p.delay+'</span>';
+  }).join('<span class="fb-sep">·</span>');
+  return '<div class="freshness-bar">'
+    + '<span class="fb-icon">🕐</span>'
+    + '<span class="fb-main">Refreshed daily at 6am AEST</span>'
+    + '<span class="fb-sep">|</span>'
+    + parts
+    + '</div>';
 }
-
-// ════════════════════════════════════════════════════
-// DATA FETCH
-// ════════════════════════════════════════════════════
-async function fetchSheet(tabName) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
-  const res  = await fetch(url);
-  const text = await res.text();
-  return parseCSV(text);
+// ─── Data helpers ─────────────────────────────────────────────────────────────
+function sumKeys(keys, range) {
+  var z = { gSpend:0,gRevenue:0,gConv:0,gClicks:0,mSpend:0,mRevenue:0,mPurch:0,mClicks:0,orders:0,gross:0,disc:0,ret:0,ship:0,tax:0,net:0,budget:0 };
+  keys.forEach(function(k){ var d=DATA[k][range]; if(!d)return; Object.keys(z).forEach(function(f){ z[f]+=(d[f]||0); }); });
+  return z;
 }
-
-function parseCSV(text) {
-  return text.trim().split('\n').map(line => {
-    const cols = []; let cur = '', inQ = false;
-    for (const ch of line) {
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-      else { cur += ch; }
+function sumCompare(keys, period) {
+  var z = { spend:0, net:0, roas:0, conv:0 };
+  keys.forEach(function(k){ var c=COMPARE[k] && COMPARE[k][period]; if(!c)return; Object.keys(z).forEach(function(f){ z[f]+=(c[f]||0); }); });
+  return z;
+}
+function kpis(d) {
+  var spend = (d.gSpend||0)+(d.mSpend||0);
+  var roas  = spend > 0 ? (d.net||0)/spend : 0;
+  var conv  = (d.gConv||0)+(d.mPurch||0);
+  return { spend:spend, roas:roas, pacing: d.budget>0?spend/d.budget:0, conv:conv };
+}
+// ─── KPI Cards ────────────────────────────────────────────────────────────────
+function renderKPIs(d, color, keys) {
+  var k    = kpis(d);
+  var mom  = sumCompare(keys, 'mom');
+  var yoy  = sumCompare(keys, 'yoy');
+  var pacPct = (k.pacing*100).toFixed(1)+'%';
+  return '<div class="kpi-row">'
+    + kpi('Total Spend',   $f(k.spend),   'Google Ads + Meta',      color,
+        '<div class="cmp-row">'+chgBadge(k.spend,mom.spend,'MoM')+chgBadge(k.spend,yoy.spend,'YoY')+'</div>')
+    + kpi('Budget',        $f(d.budget),  'Monthly media budget',   color, '')
+    + kpi('Budget Pacing', pacPct,        'of monthly budget used', color,
+        '<span class="pill '+pillCls(k.pacing)+'">'+(k.pacing<=1.05?'On track':k.pacing<=1.2?'Slight over':'Over budget')+'</span>')
+    + kpi('Net Sales',     $f(d.net),     'Shopify — ShopifyQL',    color,
+        '<div class="cmp-row">'+chgBadge(d.net,mom.net,'MoM')+chgBadge(d.net,yoy.net,'YoY')+'</div>')
+    + kpi('Combined ROAS', roasF(k.roas), 'Net sales ÷ ad spend',   color,
+        '<div class="cmp-row">'
+        +'<span class="pill '+(k.roas>=4?'pill-green':k.roas>=2?'pill-yellow':'pill-red')+'">'+(k.roas>=4?'Strong':k.roas>=2?'Moderate':'Low')+'</span>'
+        +chgBadge(k.roas,mom.roas,'MoM')+chgBadge(k.roas,yoy.roas,'YoY')
+        +'</div>')
+    + kpi('Conversions',   nf(k.conv),    'Google Ads + Meta',      color,
+        '<div class="cmp-row">'+chgBadge(k.conv,mom.conv,'MoM')+chgBadge(k.conv,yoy.conv,'YoY')+'</div>')
+    + '</div>';
+}
+function kpi(label, val, hint, color, extra) {
+  return '<div class="kpi-card" style="--accent:'+color+'">'
+    +'<div class="kpi-label">'+label+'</div>'
+    +'<div class="kpi-val">'+val+'</div>'
+    +'<div class="kpi-hint">'+hint+'</div>'
+    +(extra||'')+'</div>';
+}
+// ─── Charts ───────────────────────────────────────────────────────────────────
+function renderCharts(keys, range, color, uid) {
+  return '<div class="charts-row">'
+    +'<div class="card"><div class="card-title">Spend vs Net Sales</div><div class="chart-wrap"><canvas id="c-bar-'+uid+'"></canvas></div></div>'
+    +'<div class="card"><div class="card-title">Combined ROAS by Market</div><div class="chart-wrap"><canvas id="c-roas-'+uid+'"></canvas></div></div>'
+    +'</div>';
+}
+function initCharts(keys, range, color, uid) {
+  var labels  = keys.map(function(k){ return k.replace('_',' '); });
+  var spend   = keys.map(function(k){ var d=DATA[k][range]; return Math.round((d.gSpend||0)+(d.mSpend||0)); });
+  var sales   = keys.map(function(k){ return Math.round(DATA[k][range].net||0); });
+  var roasArr = keys.map(function(k){ var d=DATA[k][range],s=(d.gSpend||0)+(d.mSpend||0); return s>0?parseFloat((d.net/s).toFixed(2)):0; });
+  ['c-bar-'+uid,'c-roas-'+uid].forEach(function(id){ if(chartReg[id]){ chartReg[id].destroy(); delete chartReg[id]; } });
+  var el1=document.getElementById('c-bar-'+uid);
+  if(el1) chartReg['c-bar-'+uid]=new Chart(el1,{ type:'bar',
+    data:{ labels:labels, datasets:[
+      { label:'Ad Spend',  data:spend, backgroundColor:hexA(color,.45), borderRadius:5 },
+      { label:'Net Sales', data:sales, backgroundColor:hexA(color,.9),  borderRadius:5 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ font:{size:11}, boxWidth:12 } } },
+      scales:{ y:{ ticks:{ callback:function(v){ return '$'+(v/1000).toFixed(0)+'k'; }, font:{size:11} }, grid:{color:'#f2f2f0'} }, x:{ ticks:{ font:{size:11} }, grid:{display:false} } }
     }
-    cols.push(cur.trim());
-    return cols;
   });
-}
-
-async function loadData() {
-  const sp = document.getElementById('spinner');
-  sp.style.display = 'inline-block';
-  try {
-    const [platform, shopify, meta, google] = await Promise.all([
-      fetchSheet(TABS.platform),
-      fetchSheet(TABS.shopify),
-      fetchSheet(TABS.meta),
-      fetchSheet(TABS.google)
-    ]);
-    sheetData = { platform, shopify, meta, google };
-    const now = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('sidebarUpdated').textContent = now;
-    renderAll();
-  } catch(e) {
-    console.error('Sheet load error:', e);
-    document.getElementById('sidebarUpdated').textContent = 'Error';
-  }
-  sp.style.display = 'none';
-}
-
-// ════════════════════════════════════════════════════
-// RANGE
-// ════════════════════════════════════════════════════
-function setRange(r, el) {
-  currentRange = r;
-  document.querySelectorAll('.range-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderAll();
-}
-
-// ════════════════════════════════════════════════════
-// RENDER ALL
-// ════════════════════════════════════════════════════
-function renderAll() {
-  Object.keys(PAGES).forEach(key => renderPage(key));
-}
-
-function renderPage(key) {
-  const p = PAGES[key];
-  if (key === 'all') {
-    renderAllBrandsPage();
-  } else {
-    renderBrandPage(key, p.brand, p.market, p.color);
-  }
-}
-
-// ════════════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════════════
-function colIdx(headers, ...names) {
-  for (const n of names) {
-    const i = headers.findIndex(h => h && h.toLowerCase().includes(n.toLowerCase()));
-    if (i !== -1) return i;
-  }
-  return -1;
-}
-
-function filterRows(rows, brandCol, marketCol, brand, market) {
-  if (!rows || rows.length < 2) return [];
-  return rows.slice(1).filter(row => {
-    const b = (row[brandCol] || '').toUpperCase().trim();
-    const m = (row[marketCol]|| '').toUpperCase().trim();
-    const brandOk  = !brand  || b.includes(brand.toUpperCase());
-    const marketOk = !market || m === market.toUpperCase();
-    return brandOk && marketOk;
-  });
-}
-
-const fmtMoney = v => {
-  const n = parseFloat(String(v||'').replace(/[$,]/g,''));
-  if (isNaN(n) || n === 0) return '—';
-  if (Math.abs(n) >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
-  if (Math.abs(n) >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
-  return '$' + n.toFixed(2);
-};
-
-const fmtN = v => {
-  const n = parseFloat(String(v||'').replace(/[,$%]/g,''));
-  return isNaN(n) ? '—' : n.toLocaleString('en-AU');
-};
-
-const fmtPct = v => {
-  const n = parseFloat(String(v||'').replace(/[%,]/g,''));
-  return isNaN(n) ? '—' : n.toFixed(1) + '%';
-};
-
-const fmtRoas = v => {
-  const n = parseFloat(String(v||'').replace(/[$,x]/g,''));
-  return isNaN(n) || n === 0 ? '—' : n.toFixed(2) + 'x';
-};
-
-function roasCls(v) {
-  const n = parseFloat(String(v||'').replace(/[$,x]/g,''));
-  if (isNaN(n)) return '';
-  return n >= 4 ? 'roas-hi' : n >= 2 ? 'roas-mid' : 'roas-lo';
-}
-
-function pacingCls(v) {
-  const n = parseFloat(String(v||'').replace(/[%,]/g,''));
-  if (isNaN(n)) return '';
-  return n >= 40 ? 'pacing-hi' : n >= 20 ? 'pacing-mid' : 'pacing-lo';
-}
-
-function sumCol(rows, col) {
-  return rows.reduce((acc, r) => acc + (parseFloat(String(r[col]||'').replace(/[$,]/g,''))||0), 0);
-}
-
-function isNotConnected(val) {
-  if (!val || val === '' || val === '0') return true;
-  if (String(val).toLowerCase().includes('not')) return true;
-  const n = parseFloat(String(val).replace(/[$,]/g,''));
-  return isNaN(n) || n === 0;
-}
-
-// ════════════════════════════════════════════════════
-// ALL BRANDS PAGE
-// ════════════════════════════════════════════════════
-function renderAllBrandsPage() {
-  const { platform, google, meta, shopify } = sheetData;
-  if (!platform) return;
-
-  const h = platform[0];
-  const bC = colIdx(h,'brand'); const mC = colIdx(h,'market');
-  const gC = colIdx(h,'google spend','google'); const metC = colIdx(h,'meta spend','meta');
-  const totC = colIdx(h,'total'); const nsC = colIdx(h,'shopify net','net sales');
-  const rC = colIdx(h,'roas');
-
-  const rows = platform.slice(1).filter(r => r[bC]);
-
-  // KPIs
-  let spend = 0, rev = 0, gSpend = 0, mSpend = 0;
-  rows.forEach(r => {
-    spend  += parseFloat(String(r[totC]||'').replace(/[$,]/g,''))||0;
-    rev    += parseFloat(String(r[nsC] ||'').replace(/[$,]/g,''))||0;
-    gSpend += parseFloat(String(r[gC]  ||'').replace(/[$,]/g,''))||0;
-    mSpend += parseFloat(String(r[metC]||'').replace(/[$,]/g,''))||0;
-  });
-  const roas = spend > 0 ? (rev/spend).toFixed(2) : '0.00';
-
-  document.getElementById('kpi-all').innerHTML = kpiStrip([
-    { label:'Total Ad Spend',     val: fmtMoney(spend) },
-    { label:'Total Revenue',      val: fmtMoney(rev) },
-    { label:'Combined ROAS',      val: roas + 'x' },
-    { label:'Google Spend',       val: fmtMoney(gSpend) },
-    { label:'Meta Spend',         val: fmtMoney(mSpend) },
-  ]);
-
-  // ROAS table
-  let html = `<table><thead><tr>
-    <th>Brand</th><th>Market</th><th>Google Spend</th><th>Meta Spend</th>
-    <th>Total Spend</th><th>Net Sales</th><th>ROAS</th>
-  </tr></thead><tbody>`;
-  rows.forEach(r => {
-    const ns = r[nsC]||'';
-    html += `<tr>
-      <td style="font-weight:600">${r[bC]||''}</td>
-      <td><span class="market-tag">${r[mC]||''}</span></td>
-      <td>${fmtMoney(r[gC])}</td><td>${fmtMoney(r[metC])}</td>
-      <td>${fmtMoney(r[totC])}</td>
-      <td>${isNotConnected(ns)?'<span class="not-conn">Not connected</span>':fmtMoney(ns)}</td>
-      <td><span class="${roasCls(r[rC])}">${fmtRoas(r[rC])}</span></td>
-    </tr>`;
-  });
-  html += '</tbody></table>';
-  document.getElementById('tbl-all-roas').innerHTML = html;
-
-  // Charts — mock daily + mom from available data
-  renderDailyChart('chart-all-daily', rows, totC, '#5b8af5');
-  renderMomChart('chart-all-mom', rows, totC, '#5b8af5');
-}
-
-// ════════════════════════════════════════════════════
-// BRAND / MARKET PAGE
-// ════════════════════════════════════════════════════
-function renderBrandPage(key, brand, market, color) {
-  const el = document.getElementById('page-' + key);
-  if (!el || !sheetData.google) return;
-
-  // ── Google Ads
-  const gh = sheetData.google[0];
-  const gbC = colIdx(gh,'brand'); const gmC = colIdx(gh,'market');
-  const gSpC= colIdx(gh,'media spend','spend'); const gBudC= colIdx(gh,'budget');
-  const gPacC=colIdx(gh,'pacing'); const gRevC=colIdx(gh,'revenue');
-  const gRC = colIdx(gh,'roas'); const gConC=colIdx(gh,'conversion');
-  const gClC= colIdx(gh,'click'); const gCRC= colIdx(gh,'conv. rate','rate');
-
-  const gRows = filterRows(sheetData.google, gbC, gmC, brand, market);
-
-  let html = `<table><thead><tr>
-    <th>Brand</th><th>Market</th><th>Spend</th><th>Budget</th>
-    <th>Pacing</th><th>Revenue</th><th>ROAS</th><th>Conversions</th><th>Clicks</th><th>Conv. Rate</th>
-  </tr></thead><tbody>`;
-  if (gRows.length === 0) { html += `<tr><td colspan="10" class="state-msg">No data</td></tr>`; }
-  gRows.forEach(r => {
-    html += `<tr>
-      <td style="font-weight:600">${r[gbC]||''}</td>
-      <td><span class="market-tag">${r[gmC]||''}</span></td>
-      <td>${fmtMoney(r[gSpC])}</td><td>${fmtMoney(r[gBudC])}</td>
-      <td><span class="${pacingCls(r[gPacC])}">${fmtPct(r[gPacC])}</span></td>
-      <td>${fmtMoney(r[gRevC])}</td>
-      <td><span class="${roasCls(r[gRC])}">${fmtRoas(r[gRC])}</span></td>
-      <td>${fmtN(r[gConC])}</td><td>${fmtN(r[gClC])}</td><td>${fmtPct(r[gCRC])}</td>
-    </tr>`;
-  });
-  html += '</tbody></table>';
-  document.getElementById(`tbl-${key}-google`).innerHTML = html;
-
-  // ── Meta
-  const mh = sheetData.meta[0];
-  const mbC = colIdx(mh,'brand'); const mmC = colIdx(mh,'market');
-  const mSpC= colIdx(mh,'media spend','spend'); const mBudC=colIdx(mh,'budget');
-  const mPacC=colIdx(mh,'pacing'); const mRevC=colIdx(mh,'purchase revenue','revenue');
-  const mRC = colIdx(mh,'roas'); const mPurC=colIdx(mh,'purchase');
-  const mClC= colIdx(mh,'click'); const mCRC= colIdx(mh,'conv. rate','rate');
-
-  const metaRows = filterRows(sheetData.meta, mbC, mmC, brand, market);
-
-  html = `<table><thead><tr>
-    <th>Brand</th><th>Market</th><th>Spend</th><th>Budget</th>
-    <th>Pacing</th><th>Revenue</th><th>ROAS</th><th>Purchases</th><th>Clicks</th><th>Conv. Rate</th>
-  </tr></thead><tbody>`;
-  if (metaRows.length === 0) { html += `<tr><td colspan="10" class="state-msg">No data</td></tr>`; }
-  metaRows.forEach(r => {
-    html += `<tr>
-      <td style="font-weight:600">${r[mbC]||''}</td>
-      <td><span class="market-tag">${r[mmC]||''}</span></td>
-      <td>${fmtMoney(r[mSpC])}</td><td>${fmtMoney(r[mBudC])}</td>
-      <td><span class="${pacingCls(r[mPacC])}">${fmtPct(r[mPacC])}</span></td>
-      <td>${fmtMoney(r[mRevC])}</td>
-      <td><span class="${roasCls(r[mRC])}">${fmtRoas(r[mRC])}</span></td>
-      <td>${fmtN(r[mPurC])}</td><td>${fmtN(r[mClC])}</td><td>${fmtPct(r[mCRC])}</td>
-    </tr>`;
-  });
-  html += '</tbody></table>';
-  document.getElementById(`tbl-${key}-meta`).innerHTML = html;
-
-  // ── Shopify
-  const sh = sheetData.shopify[0];
-  const sbC = colIdx(sh,'brand'); const smC = colIdx(sh,'market');
-  const sOrdC=colIdx(sh,'order'); const sGrC=colIdx(sh,'gross');
-  const sDisC=colIdx(sh,'discount'); const sRetC=colIdx(sh,'return');
-  const sShpC=colIdx(sh,'shipping'); const sTaxC=colIdx(sh,'tax');
-  const sNetC=colIdx(sh,'net sales','net'); const sTotC=colIdx(sh,'total sales');
-  const sAovC=colIdx(sh,'avg','purchase value');
-
-  const shopRows = filterRows(sheetData.shopify, sbC, smC, brand, market);
-
-  html = `<table><thead><tr>
-    <th>Brand</th><th>Market</th><th>Orders</th><th>Gross Sales</th>
-    <th>Discounts</th><th>Returns</th><th>Shipping</th><th>Taxes</th>
-    <th>Net Sales</th><th>Total Sales</th><th>Avg. Order</th>
-  </tr></thead><tbody>`;
-  if (shopRows.length === 0) { html += `<tr><td colspan="11" class="state-msg">No data</td></tr>`; }
-  shopRows.forEach(r => {
-    const ns = r[sNetC]||'';
-    html += `<tr>
-      <td style="font-weight:600">${r[sbC]||''}</td>
-      <td><span class="market-tag">${r[smC]||''}</span></td>
-      <td>${fmtN(r[sOrdC])}</td><td>${fmtMoney(r[sGrC])}</td>
-      <td>${fmtMoney(r[sDisC])}</td><td>${fmtMoney(r[sRetC])}</td>
-      <td>${fmtMoney(r[sShpC])}</td><td>${fmtMoney(r[sTaxC])}</td>
-      <td>${isNotConnected(ns)?'<span class="not-conn">Not connected</span>':fmtMoney(ns)}</td>
-      <td>${fmtMoney(r[sTotC])}</td><td>${fmtMoney(r[sAovC])}</td>
-    </tr>`;
-  });
-  html += '</tbody></table>';
-  document.getElementById(`tbl-${key}-shopify`).innerHTML = html;
-
-  // ── KPIs from google+meta combined
-  let totSpend=0, totRev=0, totConv=0, totClicks=0;
-  gRows.forEach(r => {
-    totSpend += parseFloat(String(r[gSpC]||'').replace(/[$,]/g,''))||0;
-    totRev   += parseFloat(String(r[gRevC]||'').replace(/[$,]/g,''))||0;
-    totConv  += parseFloat(String(r[gConC]||'').replace(/[$,]/g,''))||0;
-    totClicks+= parseFloat(String(r[gClC]||'').replace(/[$,]/g,''))||0;
-  });
-  metaRows.forEach(r => {
-    totSpend += parseFloat(String(r[mSpC]||'').replace(/[$,]/g,''))||0;
-    totRev   += parseFloat(String(r[mRevC]||'').replace(/[$,]/g,''))||0;
-    totClicks+= parseFloat(String(r[mClC]||'').replace(/[$,]/g,''))||0;
-  });
-  const combRoas = totSpend > 0 ? (totRev/totSpend).toFixed(2) : '0.00';
-
-  document.getElementById(`kpi-${key}`).innerHTML = kpiStrip([
-    { label:'Total Ad Spend', val: fmtMoney(totSpend) },
-    { label:'Total Revenue',  val: fmtMoney(totRev) },
-    { label:'Combined ROAS',  val: combRoas + 'x' },
-    { label:'Conversions',    val: fmtN(totConv) },
-    { label:'Total Clicks',   val: fmtN(totClicks) },
-  ]);
-
-  // ── ROAS Compare
-  renderRoasCompare(key, gRows, metaRows, gRC, gRevC, gSpC, mRC, mRevC, mSpC);
-
-  // Charts
-  renderDailyChart(`chart-${key}-daily`, [...gRows, ...metaRows], gSpC, color);
-  renderMomChart(`chart-${key}-mom`, [...gRows, ...metaRows], gSpC, color);
-}
-
-// ════════════════════════════════════════════════════
-// ROAS COMPARISON TABLE — Google vs Meta, MTD vs 7D
-// Note: MTD and 7D values come from the same sheet
-// tabs filtered by the current range selection.
-// When your sheet has separate MTD/7D columns, update
-// the column lookups below to match those header names.
-// ════════════════════════════════════════════════════
-function renderRoasCompare(key, gRows, metaRows, gRC, gRevC, gSpC, mRC, mRevC, mSpC) {
-  const el = document.getElementById(`tbl-${key}-roas-compare`);
-  if (!el) return;
-
-  // Pull ROAS values — from current tab data
-  // If your sheet has explicit MTD/7D ROAS columns, map them here instead
-  const gRoas7d  = extractRoas(gRows,  gRC,  gRevC, gSpC);
-  const mRoas7d  = extractRoas(metaRows, mRC, mRevC, mSpC);
-
-  // MTD: we look for a column containing "mtd" in the header,
-  // falling back to the same value with a visual note if not found
-  const gRoasMtd = extractRoasByHeader(sheetData.google,  gRows, 'mtd roas', 'roas mtd') || gRoas7d;
-  const mRoasMtd = extractRoasByHeader(sheetData.meta,   metaRows, 'mtd roas', 'roas mtd') || mRoas7d;
-
-  const mtdNote  = (gRoasMtd === gRoas7d && mRoasMtd === mRoas7d)
-    ? '<div style="font-size:10px;color:var(--muted);padding:10px 20px 14px;border-top:1px solid var(--border)">MTD column not found in sheet — showing current period values. Add a <strong>MTD ROAS</strong> column to your sheet tabs to populate MTD separately.</div>'
-    : '';
-
-  el.innerHTML = `
-    <div class="roas-compare-grid">
-      <div class="roas-col">
-        <div class="roas-col-label">Last 7 Days</div>
-        <div class="roas-compare-row">
-          <span class="roas-platform-name">
-            <span class="platform-badge badge-google" style="margin:0">Google Ads</span>
-          </span>
-          <div class="roas-val-block">
-            <div class="roas-big ${roasCls(gRoas7d)}">${fmtRoas(gRoas7d)}</div>
-            <div class="roas-sub">ROAS</div>
-          </div>
-        </div>
-        <div class="roas-compare-row">
-          <span class="roas-platform-name">
-            <span class="platform-badge badge-meta" style="margin:0">Meta</span>
-          </span>
-          <div class="roas-val-block">
-            <div class="roas-big ${roasCls(mRoas7d)}">${fmtRoas(mRoas7d)}</div>
-            <div class="roas-sub">ROAS</div>
-          </div>
-        </div>
-      </div>
-      <div class="roas-col">
-        <div class="roas-col-label">Month to Date</div>
-        <div class="roas-compare-row">
-          <span class="roas-platform-name">
-            <span class="platform-badge badge-google" style="margin:0">Google Ads</span>
-          </span>
-          <div class="roas-val-block">
-            <div class="roas-big ${roasCls(gRoasMtd)}">${fmtRoas(gRoasMtd)}</div>
-            <div class="roas-sub">ROAS</div>
-          </div>
-        </div>
-        <div class="roas-compare-row">
-          <span class="roas-platform-name">
-            <span class="platform-badge badge-meta" style="margin:0">Meta</span>
-          </span>
-          <div class="roas-val-block">
-            <div class="roas-big ${roasCls(mRoasMtd)}">${fmtRoas(mRoasMtd)}</div>
-            <div class="roas-sub">ROAS</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    ${mtdNote}`;
-}
-
-// Calculate ROAS from revenue / spend across filtered rows
-function extractRoas(rows, roasCol, revCol, spendCol) {
-  // Try direct ROAS column first
-  if (roasCol !== -1 && rows.length > 0) {
-    const vals = rows.map(r => parseFloat(String(r[roasCol]||'').replace(/[$,x]/g,''))).filter(n => !isNaN(n) && n > 0);
-    if (vals.length > 0) return (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(2);
-  }
-  // Fall back to rev/spend
-  const rev   = rows.reduce((a,r) => a + (parseFloat(String(r[revCol]  ||'').replace(/[$,]/g,''))||0), 0);
-  const spend = rows.reduce((a,r) => a + (parseFloat(String(r[spendCol]||'').replace(/[$,]/g,''))||0), 0);
-  return spend > 0 ? (rev / spend).toFixed(2) : null;
-}
-
-// Try to find an MTD-specific ROAS column in the full sheet
-function extractRoasByHeader(fullData, filteredRows, ...headerHints) {
-  if (!fullData || fullData.length < 2) return null;
-  const headers = fullData[0];
-  for (const hint of headerHints) {
-    const col = headers.findIndex(h => h && h.toLowerCase().includes(hint.toLowerCase()));
-    if (col !== -1) {
-      const vals = filteredRows.map(r => parseFloat(String(r[col]||'').replace(/[$,x]/g,''))).filter(n => !isNaN(n) && n > 0);
-      if (vals.length > 0) return (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(2);
+  var el2=document.getElementById('c-roas-'+uid);
+  if(el2) chartReg['c-roas-'+uid]=new Chart(el2,{ type:'bar',
+    data:{ labels:labels, datasets:[{ label:'ROAS', data:roasArr, borderRadius:5, backgroundColor:roasArr.map(function(r){ return r>=4?'#22c55e99':r>=2?'#f59e0b99':'#ef444499'; }) }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(c){ return ' '+c.raw.toFixed(2)+'x'; } } } },
+      scales:{ y:{ ticks:{ callback:function(v){ return v.toFixed(1)+'x'; }, font:{size:11} }, grid:{color:'#f2f2f0'} }, x:{ ticks:{ font:{size:11} }, grid:{display:false} } }
     }
-  }
-  return null;
-}
-
-// ════════════════════════════════════════════════════
-// KPI STRIP HTML
-// ════════════════════════════════════════════════════
-function kpiStrip(items) {
-  return items.map(i => `
-    <div class="kpi-card">
-      <div class="kpi-label">${i.label}</div>
-      <div class="kpi-val">${i.val}</div>
-      <div class="kpi-delta">${currentRange.toUpperCase()}</div>
-    </div>`).join('');
-}
-
-// ════════════════════════════════════════════════════
-// CHARTS
-// Note: Real day-by-day and MoM data would come from
-// dedicated date-keyed tabs in your sheet. These charts
-// render representative data from the current rows.
-// Add a "Daily Data" and "Monthly Data" tab to your
-// sheet with columns: Date, Brand, Market, Spend, Revenue
-// and update the fetchSheet calls to pull those tabs.
-// ════════════════════════════════════════════════════
-const CHART_DEFAULTS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1c1e21', titleColor: '#e4e6eb', bodyColor: '#9ca3af', borderColor: '#2a2d31', borderWidth: 1 } },
-  scales: {
-    x: { grid: { color: '#2a2d31' }, ticks: { color: '#6b7280', font: { size: 10 } } },
-    y: { grid: { color: '#2a2d31' }, ticks: { color: '#6b7280', font: { size: 10 }, callback: v => '$' + (v>=1000?(v/1000).toFixed(0)+'K':v) } }
-  }
-};
-
-function destroyChart(id) {
-  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
-}
-
-function renderDailyChart(canvasId, rows, spendCol, color) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  destroyChart(canvasId);
-
-  // Generate last-7-days labels & distribute spend evenly (placeholder until daily tab exists)
-  const labels = [];
-  const today = new Date();
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today); d.setDate(d.getDate() - i);
-    labels.push(d.toLocaleDateString('en-AU', { day:'numeric', month:'short' }));
-  }
-  const totalSpend = rows.reduce((a,r) => a + (parseFloat(String(r[spendCol]||'').replace(/[$,]/g,''))||0), 0);
-  const base = totalSpend / 7;
-  const data = labels.map(() => +(base * (0.7 + Math.random()*0.6)).toFixed(0));
-
-  chartInstances[canvasId] = new Chart(canvas, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{ data, backgroundColor: color + '55', borderColor: color, borderWidth: 1.5, borderRadius: 4 }]
-    },
-    options: { ...CHART_DEFAULTS }
   });
 }
-
-function renderMomChart(canvasId, rows, spendCol, color) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  destroyChart(canvasId);
-
-  // Generate last 13 months
-  const labels = [];
-  const today = new Date();
-  for (let i = 12; i >= 0; i--) {
-    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-    labels.push(d.toLocaleDateString('en-AU', { month:'short', year:'2-digit' }));
-  }
-  const totalSpend = rows.reduce((a,r) => a + (parseFloat(String(r[spendCol]||'').replace(/[$,]/g,''))||0), 0);
-  const monthly = totalSpend * 4.3; // rough monthly from weekly
-  const data = labels.map((_,i) => +(monthly * (0.6 + i*0.03 + Math.random()*0.2)).toFixed(0));
-
-  chartInstances[canvasId] = new Chart(canvas, {
+// ─── Daily 30-day section ─────────────────────────────────────────────────────
+function renderDailySection(key, color) {
+  var uid = 'daily-'+key;
+  return '<div class="daily-section">'
+    +'<div class="daily-head">'
+    +'<div><span class="daily-title">Daily Performance — Last 30 Days</span></div>'
+    +'<div class="daily-sub">2026-05-02 → 2026-05-31</div>'
+    +'</div>'
+    +'<div class="daily-chart-wrap"><canvas id="'+uid+'"></canvas></div>'
+    +'<div class="daily-tbl-wrap">'
+    +'<table class="tbl"><thead><tr>'
+    +'<th>Date</th><th>Ad Spend</th><th>Net Sales</th><th>ROAS</th><th>Conversions</th>'
+    +'</tr></thead><tbody>'
+    + DAILY[key].map(function(r){
+        return '<tr>'
+          +'<td>'+r.date+'</td>'
+          +'<td>'+$f(r.spend)+'</td>'
+          +'<td>'+$f(r.net)+'</td>'
+          +'<td class="roas-num '+roasCls(r.roas)+'">'+roasF(r.roas)+'</td>'
+          +'<td>'+nf(r.conv)+'</td>'
+          +'</tr>';
+      }).join('')
+    +'</tbody></table>'
+    +'</div></div>';
+}
+function initDailyChart(key, color) {
+  var uid = 'daily-'+key;
+  if(chartReg[uid]){ chartReg[uid].destroy(); delete chartReg[uid]; }
+  var rows   = DAILY[key];
+  var labels = rows.map(function(r){ return r.date.slice(5); });
+  var spend  = rows.map(function(r){ return r.spend; });
+  var sales  = rows.map(function(r){ return r.net; });
+  var roas   = rows.map(function(r){ return r.roas; });
+  var conv   = rows.map(function(r){ return r.conv; });
+  var el = document.getElementById(uid);
+  if(!el) return;
+  chartReg[uid] = new Chart(el, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data,
-        borderColor: color,
-        backgroundColor: color + '18',
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: color,
-        fill: true,
-        tension: 0.3
-      }]
-    },
-    options: { ...CHART_DEFAULTS }
+    data: { labels: labels, datasets: [
+      { label:'Ad Spend',  data:spend, borderColor:hexA(color,.7),  backgroundColor:hexA(color,.08), borderWidth:2, pointRadius:2, yAxisID:'y',  tension:.3, fill:true },
+      { label:'Net Sales', data:sales, borderColor:hexA(color,1),   backgroundColor:'transparent',   borderWidth:2, pointRadius:2, yAxisID:'y',  tension:.3 },
+      { label:'ROAS',      data:roas,  borderColor:'#f59e0b',        backgroundColor:'transparent',   borderWidth:1.5,pointRadius:2, yAxisID:'y2', tension:.3, borderDash:[4,3] },
+      { label:'Conv.',     data:conv,  borderColor:'#6b7280',        backgroundColor:'transparent',   borderWidth:1.5,pointRadius:2, yAxisID:'y3', tension:.3, borderDash:[2,3] }
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false, interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ position:'bottom', labels:{ font:{size:11}, boxWidth:12 } } },
+      scales:{
+        x:  { ticks:{ font:{size:10}, maxTicksLimit:15 }, grid:{display:false} },
+        y:  { position:'left',  ticks:{ callback:function(v){ return '$'+(v/1000).toFixed(1)+'k'; }, font:{size:10} }, grid:{color:'#f2f2f0'} },
+        y2: { position:'right', ticks:{ callback:function(v){ return v.toFixed(1)+'x'; },           font:{size:10} }, grid:{display:false} },
+        y3: { display:false }
+      }
+    }
   });
 }
+function hexA(hex, a) {
+  var r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+// ─── Table rows ───────────────────────────────────────────────────────────────
+function gRow(key, d, color) {
+  var r=d.gSpend>0?d.gRevenue/d.gSpend:0, p=d.budget>0?d.gSpend/d.budget:0, pF=Math.min(p*100,100).toFixed(0);
+  return '<tr><td class="brand-cell">'+key.replace('_',' ')+'</td>'
+    +'<td>'+$f(d.gSpend)+'</td>'
+    +'<td><div class="pace-wrap"><div class="pace-bar"><div class="pace-fill" style="width:'+pF+'%;background:'+color+'"></div></div>'+pF+'%</div></td>'
+    +'<td>'+$f(d.gRevenue)+'</td><td class="roas-num '+roasCls(r)+'">'+roasF(r)+'</td>'
+    +'<td>'+nf(d.gConv)+'</td><td>'+nf(d.gClicks)+'</td><td>'+pct(d.gClicks>0?d.gConv/d.gClicks:0)+'</td></tr>';
+}
+function mRow(key, d, color) {
+  var r=d.mSpend>0?d.mRevenue/d.mSpend:0, p=d.budget>0?d.mSpend/d.budget:0, pF=Math.min(p*100,100).toFixed(0);
+  return '<tr><td class="brand-cell">'+key.replace('_',' ')+'</td>'
+    +'<td>'+$f(d.mSpend)+'</td>'
+    +'<td><div class="pace-wrap"><div class="pace-bar"><div class="pace-fill" style="width:'+pF+'%;background:'+color+'"></div></div>'+pF+'%</div></td>'
+    +'<td>'+$f(d.mRevenue)+'</td><td class="roas-num '+roasCls(r)+'">'+roasF(r)+'</td>'
+    +'<td>'+nf(d.mPurch)+'</td><td>'+nf(d.mClicks)+'</td><td>'+pct(d.mClicks>0?d.mPurch/d.mClicks:0)+'</td></tr>';
+}
+function sRow(key, d) {
+  return '<tr><td class="brand-cell">'+key.replace('_',' ')+'</td>'
+    +'<td>'+nf(d.orders)+'</td><td>'+$f(d.gross)+'</td><td>'+$f(d.disc)+'</td>'
+    +'<td>'+$f(d.ret)+'</td><td>'+$f(d.ship)+'</td><td>'+$f(d.tax)+'</td>'
+    +'<td><strong>'+$f(d.net)+'</strong></td></tr>';
+}
+function table(tag, tagCls, ths, rows) {
+  var rm = RANGE_META[state.range];
+  return '<div class="section">'
+    +'<div class="section-head"><span class="channel-tag '+tagCls+'">'+tag+'</span>'
+    +'<span style="font-size:11px;color:var(--text-mute);margin-left:10px;">'+rm.label+' &nbsp;·&nbsp; '+rm.dates+'</span></div>'
+    +'<table class="tbl"><thead><tr>'+ths.map(function(h){ return '<th>'+h+'</th>'; }).join('')+'</tr></thead>'
+    +'<tbody>'+rows.join('')+'</tbody></table></div>';
+}
+// ─── ROAS Summary Table ───────────────────────────────────────────────────────
+function trackCls(actual, target) {
+  if (!target || target === 0) return '';
+  var p = actual / target;
+  if (p >= 0.9)  return 'roas-track-good';
+  if (p >= 0.7)  return 'roas-track-warn';
+  return 'roas-track-bad';
+}
+function trackPct(actual, target) {
+  if (!target || target === 0) return '—';
+  return Math.round((actual / target) * 100) + '%';
+}
+function renderROASTable(keys) {
+  var rows = keys.map(function(k) {
+    var mtd    = DATA[k]['mtd']   || {};
+    var last7  = DATA[k]['last7'] || {};
+    var tgt    = ROAS_TARGETS[k]  || {};
+    var label  = k.replace('_', ' ');
+    var gMtd   = mtd.gSpend   > 0 ? parseFloat((mtd.gRevenue   / mtd.gSpend).toFixed(2))  : 0;
+    var gL7    = last7.gSpend > 0 ? parseFloat((last7.gRevenue / last7.gSpend).toFixed(2)) : 0;
+    var mMtd   = mtd.mSpend   > 0 ? parseFloat((mtd.mRevenue   / mtd.mSpend).toFixed(2))  : 0;
+    var mL7    = last7.mSpend > 0 ? parseFloat((last7.mRevenue / last7.mSpend).toFixed(2)) : 0;
+    var gTgt   = tgt.gTarget || 0;
+    var mTgt   = tgt.mTarget || 0;
+    var gCls   = trackCls(gMtd, gTgt);
+    var mCls   = trackCls(mMtd, mTgt);
+    return '<tr>'
+      + '<td class="brand-cell">'+label+'</td>'
+      + '<td>'+(gTgt ? gTgt.toFixed(2)+'x' : '—')+'</td>'
+      + '<td><strong>'+roasF(gMtd)+'</strong></td>'
+      + '<td>'+roasF(gL7)+'</td>'
+      + '<td><span class="'+gCls+'">'+trackPct(gMtd, gTgt)+'</span></td>'
+      + '<td style="width:10px;background:#f5f5f3;padding:0;"></td>'
+      + '<td>'+(mTgt ? mTgt.toFixed(2)+'x' : '—')+'</td>'
+      + '<td><strong>'+roasF(mMtd)+'</strong></td>'
+      + '<td>'+roasF(mL7)+'</td>'
+      + '<td><span class="'+mCls+'">'+trackPct(mMtd, mTgt)+'</span></td>'
+      + '</tr>';
+  });
+  return '<div class="roas-summary">'
+    + '<div class="roas-summary-head">'
+    + '<span class="roas-summary-title">ROAS — Platform vs Target</span>'
+    + '<span style="font-size:11px;color:var(--text-mute)">MTD actuals vs target · Last 7 Days for trend</span>'
+    + '</div>'
+    + '<table class="tbl"><thead>'
+    + '<tr>'
+    + '<th rowspan="2" style="vertical-align:middle;">Brand / Market</th>'
+    + '<th colspan="4" class="group-google">Google Ads</th>'
+    + '<th style="width:10px;padding:0;background:#f5f5f3;"></th>'
+    + '<th colspan="4" class="group-meta">Meta</th>'
+    + '</tr>'
+    + '<tr>'
+    + '<th>Target</th><th>MTD</th><th>Last 7d</th><th>Tracking</th>'
+    + '<th style="width:10px;padding:0;background:#f5f5f3;"></th>'
+    + '<th>Target</th><th>MTD</th><th>Last 7d</th><th>Tracking</th>'
+    + '</tr>'
+    + '</thead><tbody>'
+    + rows.join('')
+    + '</tbody></table></div>';
+}
+// ─── Page render ─────────────────────────────────────────────────────────────
+function renderPage() {
+  var cfg   = PAGE_CFG[state.page];
+  var color = cfg.color, keys = cfg.keys, range = state.range;
+  var uid   = state.page.replace(/[^a-z0-9]/gi,'');
+  var combined = sumKeys(keys, range);
+  combined.budget = keys.reduce(function(s,k){ return s+(DATA[k][range].budget||0); },0);
+  var gThs = ['Market','Spend','Pacing','Revenue','ROAS','Conversions','Clicks','Conv. Rate'];
+  var mThs = ['Market','Spend','Pacing','Revenue','ROAS','Purchases','Clicks','Conv. Rate'];
+  var sThs = ['Market','Orders','Gross Sales','Discounts','Returns','Shipping','Taxes','Net Sales'];
+
+  // Freshness banner always appears at the top of every page
+  var html = renderFreshnessBar();
+
+  html += renderKPIs(combined, color, keys);
+  if (!cfg.single) {
+    html += renderROASTable(keys);
+  }
+  html += renderCharts(keys, range, color, uid)
+    + table('Google Ads','tag-google', gThs, keys.map(function(k){ return gRow(k,DATA[k][range],color); }))
+    + table('Meta',      'tag-meta',   mThs, keys.map(function(k){ return mRow(k,DATA[k][range],color); }))
+    + table('Shopify',   'tag-shopify',sThs, keys.map(function(k){ return sRow(k,DATA[k][range]); }));
+  if (cfg.single) {
+    html += renderDailySection(keys[0], color);
+  }
+  document.getElementById('content').innerHTML = html;
+  requestAnimationFrame(function(){
+    initCharts(keys, range, color, uid);
+    if(cfg.single) initDailyChart(keys[0], color);
+  });
+}
+// ─── Navigation ──────────────────────────────────────────────────────────────
+function nav(el) {
+  state.page = el.getAttribute('data-page');
+  var cfg = PAGE_CFG[state.page];
+  document.getElementById('pgTitle').textContent = cfg.title;
+  document.getElementById('pgSub').textContent   = cfg.sub;
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  el.classList.add('active');
+  renderPage();
+}
+function setRange(r) {
+  state.range = r;
+  ['mtd','last7','last30','last6m','last12m'].forEach(function(x){
+    document.getElementById('btn-'+x).classList.toggle('active', x===r);
+  });
+  document.getElementById('rangeLabel').textContent = RANGE_META[r].dates;
+  renderPage();
+}
+// ─── Live data fetch from Apps Script ────────────────────────────────────────
+// Paste your deployed Web App URL below after completing the Apps Script setup.
+// The dashboard will fetch fresh targets and budgets from the sheet on every load.
+// Falls back silently to the hardcoded values above if the fetch fails.
+var BUDGET_API_URL = 'https://script.google.com/macros/s/AKfycbzzSCMPDxJpaq1DchFq-akZwqZaBMzbuE2zDO0MJgpZ-9rsHQcSp5-CuRWz_7vJ8kiN/exec';
+
+function loadLiveData(callback) {
+  if (!BUDGET_API_URL) { callback(); return; }
+
+  fetch(BUDGET_API_URL)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      // Update ROAS targets from sheet
+      if (data.targets) {
+        Object.keys(data.targets).forEach(function(key) {
+          if (ROAS_TARGETS[key]) {
+            ROAS_TARGETS[key].gTarget = data.targets[key].gTarget;
+            ROAS_TARGETS[key].mTarget = data.targets[key].mTarget;
+          }
+        });
+      }
+      // Update budgets across all date ranges
+      if (data.budgets) {
+        Object.keys(data.budgets).forEach(function(key) {
+          if (DATA[key]) {
+            Object.keys(DATA[key]).forEach(function(range) {
+              DATA[key][range].budget = data.budgets[key];
+            });
+          }
+        });
+      }
+      // Update footer timestamp
+      if (data.updatedAt) {
+        var d = new Date(data.updatedAt);
+        var ts = d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' });
+        var el = document.getElementById('refreshTs');
+        if (el) el.textContent = 'Targets & budgets updated ' + ts;
+      }
+      callback();
+    })
+    .catch(function() {
+      // Fetch failed — use hardcoded values silently
+      callback();
+    });
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  var first = document.querySelector('.nav-item[data-page="overview"]');
+  if(first) first.classList.add('active');
+  // Load live targets/budgets from sheet, then render
+  loadLiveData(function() {
+    renderPage();
+  });
+});
 </script>
 </body>
 </html>
